@@ -1,0 +1,15 @@
+{
+	"teachers": [
+	{% for teacher in teachers %}
+	{
+		"id": {{ teacher.id }},
+		"name": "{{ teacher.name }}",
+		"photo": "{{ teacher.photo or '' }}",
+		"certification": "{{ teacher.certification }}",
+		"lessons": "{{ teacher.lessons }}",
+		"video_available": "{{ video_available }}",
+		"price": {{ teacher.price }}
+	}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}
