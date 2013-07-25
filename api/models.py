@@ -60,6 +60,11 @@ class User_Teacher_Like(db.Model):
 	status = db.Column(db.Boolean, nullable=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+	def __init__(self, user_id, teacher_id, status):
+		self.user_id = user_id
+		self.teacher_id = teacher_id
+		self.status = status
+
 
 class Lesson_Training(db.Model):
 	__tablename__ = 'singlo_lesson_training'

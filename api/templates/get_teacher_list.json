@@ -2,14 +2,15 @@
 	"teachers": [
 	{% for teacher in teachers %}
 	{
-		"id": {{ teacher.id }},
-		"name": "{{ teacher.name }}",
-		"photo": "{{ teacher.photo or '' }}",
-		"certification": "{{ teacher.certification }}",
-		"lessons": "{{ teacher.lessons }}",
+		"id": {{ teacher.0.id }},
+		"name": "{{ teacher.0.name }}",
+		"photo": "{{ teacher.0.photo or '' }}",
+		"certification": "{{ teacher.0.certification }}",
+		"lessons": "{{ teacher.0.lessons }}",
 		"video_available": "{{ video_available }}",
-		"price": {{ teacher.price }},
-		"profile": "{{ teacher.profile }}"
+		"price": {{ teacher.0.price }},
+		"profile": "{{ teacher.0.profile }}",
+		"like": {{ teacher.1.status or False }}
 	}{% if not loop.last %},{% endif %}
 	{% endfor %}
 	]
