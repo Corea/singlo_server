@@ -1,0 +1,5 @@
+{
+	"type": "user",
+	"id": {{ user.id }},
+	"photo": "{{ user.photo or '' }}"
+}

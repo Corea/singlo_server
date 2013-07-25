@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="teacher">
+{% endblock %}
+
+{% block main %}
+<form class="form-horizontal" action="/teacher/add" method="post">
+	<div>
+		<legend>Teacher Add</legend>
+	</div>
+	<div class="control-group error">
+		<div class="controls">
+			<ul>
+				{% for error in errors %}
+				<li>{{ error|decode }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_name">Name</label> 
+		<div class="controls">
+			<input type="text" id="id_name" name="name" value="{{ name }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_birthday">Birthday</label> 
+		<div class="controls">
+			<input type="text" id="id_birthday" name="birthday" value="{{ birthday }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_phone">Phone Number</label> 
+		<div class="controls">
+			<input type="text" id="id_phone" name="phone" value="{{ phone }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_company">Company</label> 
+		<div class="controls">
+			<input type="text" id="id_company" name="company" value="{{ company }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_certification">Certifcation</label> 
+		<div class="controls">
+			<input type="text" id="id_certification" name="certification" value="{{ certification }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_lessons">Recomend Lessons</label> 
+		<div class="controls">
+			<input type="text" id="id_lessons" name="lessons" value="{{ lessons }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_price">Price</label> 
+		<div class="controls">
+			<input type="text" id="id_price" name="price" value="{{ price }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_profile">Profile</label> 
+		<div class="controls">
+			<textarea name="profile" rows="7" class="input-xxlarge">{{ profile }}</textarea>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_url">URL</label> 
+		<div class="controls">
+			<input type="text" id="id_url" name="url" class="input-xxlarge" value="{{ url }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">Add</button>
+		</div>
+	</div>
+</form>
+{% endblock %}
+

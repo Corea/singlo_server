@@ -1,0 +1,10 @@
+{
+	"type": "teacher",
+	"id": {{ teacher.id }},
+	"photo": "{{ teacher.photo or '' }}",
+	"lessons": "{{ teacher.lessons }}",
+	"certification": "{{ teacher.certification }}",
+	"price": {{ teacher.price }},
+	"profile": "{{ teacher.profile }}",
+	"url": "{{ teacher.url or '' }}"
+}

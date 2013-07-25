@@ -1,0 +1,10 @@
+body.home li.nav-home > a,
+body.teacher li.nav-teacher > a,
+body.user li.nav-user > a{
+	color: #ffffff;
+	background-color: #111111;
+}
+
+body {
+	padding-top: 40px;
+}

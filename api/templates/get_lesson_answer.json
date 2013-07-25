@@ -1,0 +1,27 @@
+{
+	"id": {{ lesson.id }},
+	"score1": "{{ lesson.score1 }}",
+	"score2": "{{ lesson.score2 }}",
+	"score3": "{{ lesson.score3 }}",
+	"score4": "{{ lesson.score4 }}",
+	"score5": "{{ lesson.score5 }}",
+	"score6": "{{ lesson.score6 }}",
+	"score7": "{{ lesson.score7 }}",
+	"score8": "{{ lesson.score8 }}",
+	"cause": "{{ lesson.cause }}",
+	"recommend1": "{{ lesson.recommend1 }}",
+	"recommend2": "{{ lesson.recommend2 }}",
+	"sound": "{{ lesson.sound }}",
+	"created_datetime": "{{ lesson.created_datetime }}",
+	"picture": [
+		{% for image in images %}
+		{ 
+			"id": {{ image.id }},
+			"number": {{ image.number }},
+			"image": "{{ image.image }}",
+			"line": "{{ image.line }}"
+		}
+		{% if not loop.last %},{% endif %}
+		{% endfor %}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"lessons": [
+	{% for lesson in lessons %}
+		{
+			"id": {{ lesson.id }},
+			"user_id": {{ lesson.user_id }},
+			"user_name": "{{ lesson.user.name }}",
+			{% if lesson.teacher_id %}"teacher_id": {{ lesson.teacher_id }},{% endif %}
+			"status": {{ lesson.status }},
+			"lesson_type": {{ lesson.lesson_type }},
+			"video": "{{ lesson.video }}",
+			"club_type": {{ lesson.club_type }},
+			"question": "{{ lesson.question }}",
+			"created_datetime": "{{ lesson.created_datetime }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

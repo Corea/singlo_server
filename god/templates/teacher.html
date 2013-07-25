@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="teacher">
+{% endblock %}
+
+{% block main %}
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Birthday</th>
+				<th>Phone Number</th>
+				<th>Company</th>
+				<th>Certification</th>
+				<th>Lessons</th>
+				<th>Price</th>
+				<th>Profile</th>
+				<th>URL</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for teacher in teachers %} 
+			<tr>
+				<td>{{ teacher.id }}</td>
+				<td>{{ teacher.name|decode }}</td>
+				<td>{{ teacher.birthday|decode }}</td>
+				<td>{{ teacher.phone|decode }}</td>
+				<td>{{ teacher.company|decode }}</td>
+				<td>{{ teacher.certification|decode }}</td>
+				<td>{{ teacher.lessons|decode }}</td>
+				<td>{{ teacher.price }}</td>
+				<td>{{ teacher.profile|decode }}</td>
+				<td>{{ teacher.url|decode }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="10"><a href="/teacher/add">추가하기</a></td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+{% endblock %}

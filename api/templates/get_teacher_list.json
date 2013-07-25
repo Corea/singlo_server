@@ -8,7 +8,8 @@
 		"certification": "{{ teacher.certification }}",
 		"lessons": "{{ teacher.lessons }}",
 		"video_available": "{{ video_available }}",
-		"price": {{ teacher.price }}
+		"price": {{ teacher.price }},
+		"profile": "{{ teacher.profile }}"
 	}{% if not loop.last %},{% endif %}
 	{% endfor %}
 	]
