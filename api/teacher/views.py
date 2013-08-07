@@ -8,7 +8,7 @@ mod = Blueprint('teacher', __name__, url_prefix='/teacher')
 
 @mod.route('/get_list', methods=['POST'])
 def get_list():
-#	try:
+	try:
 		user_id = int(request.form['user_id'])
 		teachers = queries.get_all_teacher()
 		new_teachers = []
@@ -17,8 +17,8 @@ def get_list():
 				queries.get_user_teacher_like(user_id, teacher.id)])
 			
 		return render_template('get_teacher_list.json', teachers=new_teachers)
-#	except:
-#		return render_template('error.json')
+	except:
+		return render_template('error.json')
 
 @mod.route('/like', methods=['POST'])
 def like():

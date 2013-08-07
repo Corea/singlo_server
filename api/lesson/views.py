@@ -3,20 +3,21 @@
 from flask import Blueprint
 from flask import request, render_template, current_app
 
-from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image
+from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Lesson_Evaluation
 import api.lesson.queries as queries
 
 import os
+import string
+import random
+import Image
 
 mod = Blueprint('lesson', __name__, url_prefix='/lesson')
 
-@mod.route('/ask', methods=['POST'])
-def ask():
+@mod.route('/ask_fast', methods=['POST'])
+def ask_fast():
 	try:
 		user_id = int(request.form['user_id'])
 		teacher_id = None
-		if 'teacher_id' in request.form and request.form['teacher_id'] is not None:
-			teacher_id = int(request.form['teacher_id'])
 		lesson_type = True
 		video = None
 		club_type = int(request.form['club_type'])
@@ -25,7 +26,7 @@ def ask():
 		lesson_question = Lesson_Question(
 			user_id, teacher_id, False, lesson_type, 
 			video, club_type, question)
-		lesson_question = queries.add_lesson_question(lesson_question)
+		lesson_question = queries.add_lesson_question_video(lesson_question)
 		file = request.files['video']
 		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], lesson_question.video)
 		file.save(file_path)
@@ -34,6 +35,41 @@ def ask():
 		return render_template('success.json')
 	except Exception:
 		return render_template('error.json')
+
+@mod.route('/ask_slow', methods=['POST'])
+def ask_slow():
+	try:
+		user_id = int(request.form['user_id'])
+		teacher_id_list = request.form.getlist('teacher_id[]')
+		lesson_type = True
+		video = None
+		club_type = int(request.form['club_type'])
+		question = request.form['question']
+
+		lesson_question_list = []
+		for teacher_id in teacher_id_list:
+			lesson_question = Lesson_Question(
+				user_id, teacher_id, False, lesson_type, 
+				video, club_type, question)
+
+			if video is None:
+				lesson_question = queries.add_lesson_question_video(lesson_question)
+				video = lesson_question.video
+			else:
+				lesson_question = queries.add_lesson_question(lesson_question)
+
+			lesson_question_list.append(lesson_question)
+
+		file = request.files['video']
+		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], video)
+		file.save(file_path)
+		os.system('/usr/local/bin/MP4Box -hint %s' % file_path)
+
+		return render_template('success.json')
+	except Exception:
+		return render_template('error.json')
+
+
 
 @mod.route('/answer', methods=['POST'])
 def answer():
@@ -61,6 +97,7 @@ def answer():
 		if lesson_question.status:
 			return render_template('error.json')
 
+		print lesson_question.status
 		lesson_question.teacher_id = teacher_id
 		lesson_question.status = True
 
@@ -91,31 +128,91 @@ def answer():
 
 @mod.route('/get_list', methods=['POST'])
 def get_list():
-	if request.method == 'POST':
-		teacher_id = int(request.form['teacher_id'])
-		lessons = queries.get_all_lesson(teacher_id)
-		return render_template('get_lesson_list.json', lessons=lessons)
-	else:
-		return render_template('error.json')
+	teacher_id = int(request.form['teacher_id'])
+	lessons = queries.get_all_lesson(teacher_id)
+	return render_template('get_lesson_list.json', lessons=lessons)
 
 @mod.route('/get_list_user', methods=['POST'])
 def get_list_user():
-	if request.method == 'POST':
-		user_id = int(request.form['user_id'])
-		lessons = queries.get_all_lesson_by_user(user_id)
-		return render_template('get_lesson_list.json', lessons=lessons)
-	else:
-		return render_template('error.json')
+	user_id = int(request.form['user_id'])
+	lessons = queries.get_all_lesson_by_user(user_id)
+	return render_template('get_lesson_list.json', lessons=lessons)
 
 
 @mod.route('/get_answer', methods=['POST'])
 def get_answer():
-	if request.method == 'POST':
+	lesson_id = int(request.form['lesson_id'])
+	lesson = queries.get_lesson_answer(lesson_id)
+	images = queries.get_lesson_answer_image(lesson.id)
+	return render_template('get_lesson_answer.json', lesson=lesson, images=images)
+
+@mod.route('/get_video_capture', methods=['POST'])
+def get_video_capture():
+	try:
 		lesson_id = int(request.form['lesson_id'])
-		lesson = queries.get_lesson_answer(lesson_id)
-		images = queries.get_lesson_answer_image(lesson.id)
-		return render_template('get_lesson_answer.json', lesson=lesson, images=images)
-	else: 
+		current_position = int(request.form['current_position'])
+		current_time = "%s:%s:%s.%s" % (current_position / 10000000,
+				(current_position / 100000) % 100, 
+				(current_position / 1000) % 100, current_position % 1000)
+		print lesson_id, current_position
+
+		lesson_question = queries.get_lesson_question(lesson_id)
+		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], lesson_question.video)
+
+		temp_name = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(50))
+		temp_name += '.png'
+		temp_path = os.path.join(current_app.config['CAPTURE_FOLDER'], temp_name)
+		
+		rotation = 0
+		try:
+			os.system('mediainfo %s | grep Rotation > /tmp/%s' % (file_path, temp_name))
+			f = open("/tmp/%s" % temp_name, "r")
+			rotation = f.read()
+			f.close()
+			rotation = rotation.split(' : ')[1].strip()[:-2]
+			print rotation
+			rotation = 360 - int(rotation)
+		except:
+			pass
+		
+		os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
+		
+		image = Image.open(temp_path)
+		image = image.rotate(float(rotation))
+		width, height = image.size
+		if width > 360: 
+			height = int(height / (width / 360.))
+			width = 360
+			image = image.resize((width, height), Image.ANTIALIAS)
+		image.save(temp_path)
+
+		return render_template('get_video_capture.json', path=temp_name)
+	except:
+		return render_template('error.json')
+
+
+@mod.route('/evaluation', methods=['POST'])
+def evaluation():
+	try:
+		user_id = int(request.form['user_id'])
+		lesson_id = int(request.form['lesson_id'])
+		review = request.form['review']
+		speed = float(request.form['speed'])
+		accuracy = float(request.form['accuracy'])
+		price = float(request.form['price'])
+		recommend = int(request.form['recommend'])
+		if recommend == 1: 
+			recommend = True
+		else:
+			recommend = False
+
+		lesson_question = queries.get_lesson_question(lesson_id)
+		lesson_evaluation = Lesson_Evaluation(lesson_question.id, review, 
+			speed, accuracy, price, recommend)
+		queries.add_lesson_evaluation(lesson_evaluation)
+
+		return render_template('success.json')
+	except Exception, e:
 		return render_template('error.json')
 
 

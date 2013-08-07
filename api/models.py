@@ -154,3 +154,25 @@ class Lesson_Answer_Image(db.Model):
 		self.image = image
 		self.line = line
 
+class Lesson_Evaluation(db.Model):
+	__tablename__ = 'singlo_lesson_evaluation'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	question_id = db.Column(db.Integer,
+		db.ForeignKey('singlo_lesson_question.id'), nullable=False)
+	question = db.relationship('Lesson_Question')
+	review = db.Column(db.Text, nullable=False)
+	speed = db.Column(db.Float, nullable=False)
+	accuracy = db.Column(db.Float, nullable=False)
+	price = db.Column(db.Float, nullable=False)
+	recommend = db.Column(db.Boolean, nullable=False)
+	created_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
+
+	def __init__(self, question_id, review, speed, accuracy, price, recommend):
+		self.question_id = question_id
+		self.review = review
+		self.speed = speed
+		self.accuracy = accuracy
+		self.price = price
+		self.recommend = recommend

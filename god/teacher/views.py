@@ -66,5 +66,3 @@ def add():
 		birthday=birthday, phone=phone, company=company,
 		certification=certification, lessons=lessons,
 		price=price, profile=profile, url=url, errors=errors)
-
-

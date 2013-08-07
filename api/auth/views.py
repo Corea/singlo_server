@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import request, render_template, send_from_directory
-from flask import Blueprint
+from flask import Blueprint, current_app
 
 import api.auth.queries as queries
 
-mod = Blueprint('auth', __name__, url_prefix='/auth')
+import os
 
+
+mod = Blueprint('auth', __name__, url_prefix='/auth')
 
 @mod.route('/register', methods=['POST'])
 def register():
@@ -13,16 +15,24 @@ def register():
 		name = request.form['name']
 		birthday = request.form['birthday']
 		phone = request.form['phone']
+		if 'profile' in request.files:
+			profile = request.files['profile']
+		else:
+			profile = None
 		
 		user = queries.get_valid_user(name, birthday, phone)
 		teacher = queries.get_valid_teacher(name, birthday, phone)
 		if user is None and teacher is None:
-			queries.add_user(name, birthday, phone)
+			queries.add_user(name, birthday, phone, profile)
 			user = queries.get_valid_user(name, birthday, phone)
+			if profile is not None:
+				profile_path = os.path.join(current_app.config['PROFILE_FOLDER'], user.photo)
+				profile.save(profile_path)
 			return render_template('register.json', user=user)
 		else:
 			raise
 	except Exception as e:
+		print e
 		return render_template('error.json')
 
 

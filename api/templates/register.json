@@ -1,4 +1,5 @@
 {
 	"result": "success",
-	"id": {{ user.id }}
+	"id": {{ user.id }}, 
+	"photo": "{{ user.photo or '' }}"
 }

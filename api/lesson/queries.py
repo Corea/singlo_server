@@ -3,12 +3,20 @@
 from api import db
 from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Lesson_Training
 
-def add_lesson_question(lesson_question):
+def add_lesson_question_video(lesson_question):
 	db.session.add(lesson_question)
 	db.session.commit()
 	lesson_question.video = str(lesson_question.id) + '_question'
 	db.session.commit()
+
 	return lesson_question
+
+def add_lesson_question(lesson_question):
+	db.session.add(lesson_question)
+	db.session.commit()
+
+	return lesson_question
+
 
 def get_lesson_question(lesson_id):
 	lesson = Lesson_Question.query.filter_by(
@@ -16,11 +24,12 @@ def get_lesson_question(lesson_id):
 
 	return lesson
 
-def add_lesson_answer(lessson_answer):
+def add_lesson_answer(lesson_answer):
 	db.session.add(lesson_answer)
 	db.session.commit()
-	lesson_answer.sound = str(lesson_answer.id) + '_answer_sound.amr'
+	lesson_answer.sound = str(lesson_answer.id) + '_answer_sound.wav'
 	db.session.commit()
+
 	return lesson_answer
 
 def get_lesson_answer(lesson_id):
@@ -55,3 +64,7 @@ def get_all_lesson_by_user(user_id):
 
 	return lessons
 
+
+def add_lesson_evaluation(lesson_evaluation):
+	db.session.add(lesson_evaluation)
+	db.session.commit()
