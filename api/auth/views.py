@@ -45,15 +45,19 @@ def login():
 
 		user = queries.get_valid_user(name, birthday, phone)
 		if user is None:
-			teacher = queries.get_valid_teacher(
-				name, birthday, phone)
+			teacher = queries.get_valid_teacher(name, birthday, phone)
 			if teacher is None:
 				raise
 			else:
-				return render_template('login_teacher.json', teacher=teacher)
+				count = queries.count_unanswer_question(teacher.id)
+				evaluation = queries.get_score_evaluation(teacher.id)
+				return render_template('login_teacher.json', 
+					teacher=teacher, count=count, evaluation=evaluation)
 		else:
-			return render_template('login.json', user=user)
-	except:
+			count = queries.count_unconfirm_question(user.id)
+			return render_template('login.json', user=user, count=count)
+	except Exception, e:
+		print e
 		return render_template('error.json')
 
 

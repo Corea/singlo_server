@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block main %}
-<form class="form-horizontal" action="/teacher/add" method="post" enctype="multipart/form-data">
+<form class="form-horizontal" action="/teacher/modify/{{ teacher_id }}" method="post" enctype="multipart/form-data">
 	<div>
-		<legend>Teacher Add</legend>
+		<legend>Teacher Modify</legend>
 	</div>
 	<div class="control-group error">
 		<div class="controls">
@@ -63,6 +63,13 @@
 	<div class="control-group">
 		<label class="control-label" for="id_photo">Profile Image</label> 
 		<div class="controls">
+			{% if photo %}
+			<div>
+				<img src="http://garagestory.cafe24.com:5000/profile/{{ photo }}" alt="profile image" width="300"><br>
+				<a href="/teacher/remove_photo/{{ teacher_id }}">사진 삭제하기</a>
+			</div>
+
+			{% endif %}
 			<input type="file" id="id_photo" name="photo" class="input-large">
 		</div>
 	</div>
@@ -74,7 +81,7 @@
 	</div>
 	<div class="control-group">
 		<div class="controls">
-			<button type="submit" class="btn">Add</button>
+			<button type="submit" class="btn">Modify</button>
 		</div>
 	</div>
 </form>

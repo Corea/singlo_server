@@ -1,5 +1,6 @@
 {
 	"type": "user",
 	"id": {{ user.id }},
-	"photo": "{{ user.photo or '' }}"
+	"photo": "{{ user.photo or '' }}", 
+	"count": {{ count }}
 }

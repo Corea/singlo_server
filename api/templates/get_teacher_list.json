@@ -6,11 +6,17 @@
 		"name": "{{ teacher.0.name }}",
 		"photo": "{{ teacher.0.photo or '' }}",
 		"certification": "{{ teacher.0.certification }}",
-		"lessons": "{{ teacher.0.lessons }}",
-		"video_available": "{{ video_available }}",
+		"company": "{{ teacher.0.company }}",
+		"status": {{ teacher.0.status or False }},
+		"status_message": "{{ teacher.0.status_message }}",
 		"price": {{ teacher.0.price }},
 		"profile": "{{ teacher.0.profile }}",
-		"like": {{ teacher.1.status or False }}
+		"url": "{{ teacher.0.url }}",
+		"like": {{ teacher.1.status or False }}, 
+		"active": {{ teacher.0.active or False }},
+
+		"evaluation_count": {{ teacher.2.count }},
+		"evaluation_score": {{ teacher.2.average }}
 	}{% if not loop.last %},{% endif %}
 	{% endfor %}
 	]

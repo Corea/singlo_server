@@ -10,3 +10,4 @@ SECURITY_PASSWORD_SALT = 'SALT_OF_SALT'
 
 SQLALCHEMY_DATABASE_URI = 'mysql://root:singlogolf@34@localhost/garagestory'
 
+PROFILE_FOLDER = os.path.join(os.getcwd(), 'api/profile')

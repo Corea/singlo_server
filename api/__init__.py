@@ -25,6 +25,10 @@ def uploaded_file(filename):
 def captured_file(filename):
 	return send_from_directory(app.config['CAPTURE_FOLDER'], filename)
 
+@app.route('/profile/<filename>')
+def profile_file(filename):
+	return send_from_directory(app.config['PROFILE_FOLDER'], filename)
+
 from api.auth.views import mod as authModule
 from api.teacher.views import mod as teacherModule
 from api.lesson.views import mod as lessonModule

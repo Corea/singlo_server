@@ -4,8 +4,9 @@ from api import db
 from api.models import Teacher, User_Teacher_Like
 
 def get_teacher(teacher_id):
-	teacher = Teacher.query.filter_by(
-		teacher_id=teacher_id).first()
+	teacher = Teacher.query.filter_by(id=teacher_id).first()
+
+	return teacher
 	
 def get_all_teacher():
 	teachers = Teacher.query.all()
@@ -28,3 +29,7 @@ def add_user_teacher_like(user_id, teacher_id, status):
 		user_teacher_like.status = status
 	db.session.commit()
 
+def make_lesson_status(teacher_id, status):
+	teacher = get_teacher(teacher_id)
+	teacher.status = status
+	db.session.commit()

@@ -5,6 +5,8 @@ from flask import request, render_template, current_app
 
 from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Lesson_Evaluation
 import api.lesson.queries as queries
+import api.teacher.queries as teacher_queries
+import api.auth.queries as auth_queries
 
 import os
 import string
@@ -12,6 +14,21 @@ import random
 import Image
 
 mod = Blueprint('lesson', __name__, url_prefix='/lesson')
+
+
+def get_video_rotation(file_path):
+	rotation = 0
+	try:
+		file_name = os.path.basename(file_path)[0]
+		os.system('mediainfo %s | grep Rotation > /tmp/%s' % (file_path, file_name))
+		f = open("/tmp/%s" % file_name, "r")
+		rotation = f.read()
+		f.close()
+		rotation = int(rotation.split(' : ')[1].strip()[:-2])
+	except Exception, e:
+		rotation = 0
+	return rotation
+
 
 @mod.route('/ask_fast', methods=['POST'])
 def ask_fast():
@@ -27,10 +44,31 @@ def ask_fast():
 			user_id, teacher_id, False, lesson_type, 
 			video, club_type, question)
 		lesson_question = queries.add_lesson_question_video(lesson_question)
-		file = request.files['video']
+
+		#TODO: 파일 처리 완료 후 DB에 들어가게 설정
+
+		temp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 
+			'temp_' + lesson_question.video)
 		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], lesson_question.video)
-		file.save(file_path)
-		os.system('/usr/local/bin/MP4Box -hint %s' % file_path)
+
+		file = request.files['video']
+		file.save(temp_file_path)
+		os.system('/usr/local/bin/MP4Box -hint %s' % temp_file_path)
+		rotation = get_video_rotation(temp_file_path)
+
+		transpose = 0
+		if rotation == 90:
+			transpose = 1
+		elif rotation == 180:
+			transpose = 2
+		elif rotation == 270:
+			transpose = 3
+
+		os.system("/usr/local/bin/ffmpeg -i %s -filter:v 'setpts=4.0*PTS,transpose=%s' %s" % (temp_file_path, transpose, file_path))
+		try:
+			with open(file_path): pass
+		except:
+			os.system("mv %s %s" % (temp_file_path, file_path))
 
 		return render_template('success.json')
 	except Exception:
@@ -60,10 +98,30 @@ def ask_slow():
 
 			lesson_question_list.append(lesson_question)
 
+		#TODO: 파일 처리 완료 후 DB에 들어가게 설정
+
+		temp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 
+			'temp_' + lesson_question.video)
+		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], lesson_question.video)
+
 		file = request.files['video']
-		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], video)
-		file.save(file_path)
-		os.system('/usr/local/bin/MP4Box -hint %s' % file_path)
+		file.save(temp_file_path)
+		os.system('/usr/local/bin/MP4Box -hint %s' % temp_file_path)
+		rotation = get_video_rotation(temp_file_path)
+
+		transpose = 0
+		if rotation == 90:
+			transpose = 1
+		elif rotation == 180:
+			transpose = 2
+		elif rotation == 270:
+			transpose = 3
+
+		os.system("/usr/local/bin/ffmpeg -i %s -filter:v 'setpts=4.0*PTS,transpose=%s' %s" % (temp_file_path, transpose, file_path))
+		try:
+			with open(file_path): pass
+		except:
+			os.system("mv %s %s" % (temp_file_path, file_path))
 
 		return render_template('success.json')
 	except Exception:
@@ -74,6 +132,7 @@ def ask_slow():
 @mod.route('/answer', methods=['POST'])
 def answer():
 	try:
+		print request.form
 		lesson_id = int(request.form['lesson_id'])
 		teacher_id = int(request.form['teacher_id'])
 		image_count = int(request.form['image_count'])
@@ -97,9 +156,10 @@ def answer():
 		if lesson_question.status:
 			return render_template('error.json')
 
-		print lesson_question.status
+		# TODO: this rountines muste be in queries.py
 		lesson_question.teacher_id = teacher_id
 		lesson_question.status = True
+		# END TODO
 
 		lesson_answer = Lesson_Answer(lesson_id, score1, score2, score3,
 			score4, score5, score6, score7, score8, '', cause, recommend1, recommend2)
@@ -170,10 +230,9 @@ def get_video_capture():
 			rotation = f.read()
 			f.close()
 			rotation = rotation.split(' : ')[1].strip()[:-2]
-			print rotation
 			rotation = 360 - int(rotation)
 		except:
-			pass
+			rotation = 0
 		
 		os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
 		
@@ -187,7 +246,8 @@ def get_video_capture():
 		image.save(temp_path)
 
 		return render_template('get_video_capture.json', path=temp_name)
-	except:
+	except Exception, e:
+		print e
 		return render_template('error.json')
 
 
@@ -207,12 +267,24 @@ def evaluation():
 			recommend = False
 
 		lesson_question = queries.get_lesson_question(lesson_id)
-		lesson_evaluation = Lesson_Evaluation(lesson_question.id, review, 
-			speed, accuracy, price, recommend)
-		queries.add_lesson_evaluation(lesson_evaluation)
+		lesson_answer = queries.get_lesson_answer(lesson_id)
+		if lesson_answer.evaluation_status:
+			raise
+
+		lesson_evaluation = Lesson_Evaluation(lesson_question.id, 
+			lesson_question.teacher_id, review, speed, accuracy, price, recommend)
+		queries.add_lesson_evaluation(lesson_question, lesson_evaluation)
 
 		return render_template('success.json')
 	except Exception, e:
+		print e
 		return render_template('error.json')
 
-
+@mod.route('/get_unconfirm_count', methods=['POST'])
+def get_unconfirm_count():
+	try:
+		user_id = int(request.form['user_id'])
+		count = auth_queries.count_unconfirm_question(user_id)
+		return render_template('count.json', count=count)
+	except Exception, e:
+		return render_template('error.json')

@@ -6,7 +6,7 @@ from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Less
 def add_lesson_question_video(lesson_question):
 	db.session.add(lesson_question)
 	db.session.commit()
-	lesson_question.video = str(lesson_question.id) + '_question'
+	lesson_question.video = str(lesson_question.id) + '_question.avi'
 	db.session.commit()
 
 	return lesson_question
@@ -35,6 +35,8 @@ def add_lesson_answer(lesson_answer):
 def get_lesson_answer(lesson_id):
 	answer = Lesson_Answer.query.filter_by(
 		question_id=lesson_id).first()
+	answer.confirm_status = True
+	db.session.commit()
 
 	return answer
 
@@ -65,6 +67,7 @@ def get_all_lesson_by_user(user_id):
 	return lessons
 
 
-def add_lesson_evaluation(lesson_evaluation):
+def add_lesson_evaluation(lesson_question, lesson_evaluation):
+	lesson_question.evaluation_status = True
 	db.session.add(lesson_evaluation)
 	db.session.commit()

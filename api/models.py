@@ -38,11 +38,12 @@ class Teacher(db.Model):
 	photo = db.Column(db.String(63), nullable=True)
 	company = db.Column(db.String(63), nullable=False)
 	certification = db.Column(db.String(63), nullable=False)
-	lessons = db.Column(db.String(63), nullable=False)
-	video_available = db.Column(db.Boolean, nullable=False)
+	status = db.Column(db.Boolean, nullable=False, default=True)
+	status_message = db.Column(db.String(255), nullable=False, default='')
 	price = db.Column(db.Integer, nullable=False)
 	profile = db.Column(db.Text, nullable=False)
 	url = db.Column(db.String(127), nullable=False)
+	active = db.Column(db.Boolean, nullable=False, default=True)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 	lastlogin_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -118,6 +119,8 @@ class Lesson_Answer(db.Model):
 	cause = db.Column(db.Integer, nullable=False, default=0)
 	recommend1 = db.Column(db.Integer, nullable=False, default=0)
 	recommend2 = db.Column(db.Integer, nullable=False, default=0)
+	confirm_status = db.Column(db.Boolean, nullable=False, default=False)
+	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 	def __init__(self, question_id, score1, score2, score3, score4, score5, 
@@ -162,15 +165,19 @@ class Lesson_Evaluation(db.Model):
 	question_id = db.Column(db.Integer,
 		db.ForeignKey('singlo_lesson_question.id'), nullable=False)
 	question = db.relationship('Lesson_Question')
+	teacher_id = db.Column(db.Integer, 
+		db.ForeignKey('singlo_teacher.id'), nullable=False)
+	teacher = db.relationship('Teacher')
 	review = db.Column(db.Text, nullable=False)
 	speed = db.Column(db.Float, nullable=False)
 	accuracy = db.Column(db.Float, nullable=False)
 	price = db.Column(db.Float, nullable=False)
 	recommend = db.Column(db.Boolean, nullable=False)
-	created_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-	def __init__(self, question_id, review, speed, accuracy, price, recommend):
+	def __init__(self, question_id, teacher_id, review, speed, accuracy, price, recommend):
 		self.question_id = question_id
+		self.teacher_id = teacher_id
 		self.review = review
 		self.speed = speed
 		self.accuracy = accuracy

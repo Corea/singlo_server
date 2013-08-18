@@ -15,10 +15,10 @@
 				<th>Phone Number</th>
 				<th>Company</th>
 				<th>Certification</th>
-				<th>Lessons</th>
 				<th>Price</th>
 				<th>Profile</th>
 				<th>URL</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -30,10 +30,13 @@
 				<td>{{ teacher.phone|decode }}</td>
 				<td>{{ teacher.company|decode }}</td>
 				<td>{{ teacher.certification|decode }}</td>
-				<td>{{ teacher.lessons|decode }}</td>
 				<td>{{ teacher.price }}</td>
 				<td>{{ teacher.profile|decode }}</td>
 				<td>{{ teacher.url|decode }}</td>
+				<td>
+					<a href="/teacher/modify/{{ teacher.id }}">수정</a>
+					<a href="/teacher/remove/{{ teacher.id }}">삭제</a>
+				</td>
 			</tr>
 		{% endfor %}
 		</tbody>

@@ -2,9 +2,16 @@
 	"type": "teacher",
 	"id": {{ teacher.id }},
 	"photo": "{{ teacher.photo or '' }}",
-	"lessons": "{{ teacher.lessons }}",
 	"certification": "{{ teacher.certification }}",
+	"company": "{{ teacher.company }}",
+	"status": {{ status or False }},
+	"status_message": "{{ status_message }}",
 	"price": {{ teacher.price }},
 	"profile": "{{ teacher.profile }}",
-	"url": "{{ teacher.url or '' }}"
+	"url": "{{ teacher.url or '' }}",
+	"active": {{ teacher.active or False }}, 
+	"count": {{ count }}, 
+
+	"evaluation_count": {{ evaluation.count }},
+	"evaluation_score": {{ evaluation.average }}
 }
