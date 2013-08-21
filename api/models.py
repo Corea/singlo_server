@@ -16,12 +16,14 @@ class User(db.Model):
 	photo = db.Column(db.String(63), nullable=True)
 	created_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
 	lastlogin_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
+	pushtoken = db.Column(db.String(200), nullable=True)
 	
-	def __init__(self, name, birthday, phone, photo=None):
+	def __init__(self, name, birthday, phone, photo=None, pushtoken=None,):
 		self.name = name
 		self.birthday = birthday
 		self.phone = phone
 		self.photo = photo
+		self.pushtoken = pushtoken
 
 	def set_password(password):
 		pass
@@ -46,6 +48,7 @@ class Teacher(db.Model):
 	active = db.Column(db.Boolean, nullable=False, default=True)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 	lastlogin_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	pushtoken = db.Column(db.String(200), nullable=True)
 
 	def __init__(self):
 		pass

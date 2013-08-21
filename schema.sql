@@ -22,6 +22,7 @@ CREATE TABLE singlo_user (
 	`photo` VARCHAR(63) DEFAULT NULL,
 	`created_datetime` DATETIME NOT NULL,
 	`lastlogin_datetime` DATETIME NOT NULL,
+	`pushtoken` VARCHAR(100) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -42,6 +43,7 @@ CREATE TABLE singlo_teacher (
 	`url` VARCHAR(127) NOT NULL,
 	`created_datetime` DATETIME NOT NULL,
 	`lastlogin_datetime` DATETIME NOT NULL,
+	`pushtoken` VARCHAR(100) NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

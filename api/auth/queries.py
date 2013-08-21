@@ -6,8 +6,7 @@ from api.models import User, Teacher, Lesson_Question, \
 
 from datetime import datetime
 
-def add_user(name, birthday, phone, photo=None):
-	user = User(name, birthday, phone)
+def add_user(name, birthday, phone, photo, pushtoken):
 	db.session.add(user)
 	db.session.commit()
 	if photo is not None:
@@ -22,6 +21,11 @@ def get_valid_user(name, birthday, phone):
 		db.session.commit()
 
 	return user
+
+def get_reg_id(user_id):
+        user=User.query.filter_by(
+                id=user_id).first()
+        return user.pushtoken
 
 def get_valid_teacher(name, birthday, phone):
 	teacher = Teacher.query.filter_by(

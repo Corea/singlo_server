@@ -15,6 +15,7 @@ def register():
 		name = request.form['name']
 		birthday = request.form['birthday']
 		phone = request.form['phone']
+		pushtoken = request.form['pushtoken']
 		if 'profile' in request.files:
 			profile = request.files['profile']
 		else:
@@ -23,7 +24,7 @@ def register():
 		user = queries.get_valid_user(name, birthday, phone)
 		teacher = queries.get_valid_teacher(name, birthday, phone)
 		if user is None and teacher is None:
-			queries.add_user(name, birthday, phone, profile)
+			queries.add_user(name, birthday, phone, pushtoken, profile)
 			user = queries.get_valid_user(name, birthday, phone)
 			if profile is not None:
 				profile_path = os.path.join(current_app.config['PROFILE_FOLDER'], user.photo)
