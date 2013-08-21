@@ -18,12 +18,12 @@ class User(db.Model):
 	lastlogin_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
 	pushtoken = db.Column(db.String(200), nullable=True)
 	
-	def __init__(self, name, birthday, phone, photo=None, pushtoken=None,):
+	def __init__(self, name, birthday, phone, pushtoken, photo=None):
 		self.name = name
 		self.birthday = birthday
 		self.phone = phone
-		self.photo = photo
 		self.pushtoken = pushtoken
+		self.photo = photo
 
 	def set_password(password):
 		pass
