@@ -14,3 +14,4 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), 'api/video')
 CAPTURE_FOLDER = os.path.join(os.getcwd(), 'api/capture')
 PROFILE_FOLDER = os.path.join(os.getcwd(), 'api/profile')
 
+GCM_APIKEY = 'AIzaSyBDkxqu_qW1LofgPLhaSfUoRQIw16WOSY4'

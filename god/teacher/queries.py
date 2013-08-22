@@ -28,6 +28,7 @@ def add_teacher(name, birthday, phone, photo=None, company="", \
 	teacher.birthday = urllib.quote_plus(birthday.encode('utf8'))
 	teacher.phone = urllib.quote_plus(phone.encode('utf8'))
 	teacher.photo = None
+	teacher.pushtoken = None
 	teacher.company = urllib.quote_plus(company.encode('utf8'))
 	teacher.certification = urllib.quote_plus(certification.encode('utf8'))
 	teacher.video_available = video_available
