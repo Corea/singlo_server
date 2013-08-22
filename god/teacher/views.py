@@ -6,6 +6,7 @@ from flask.ext.security import login_required
 
 import god.teacher.queries as queries
 from god import urldecode
+from api.auth.func import get_timestamp
 
 import urllib
 import os
@@ -109,7 +110,7 @@ def modify(teacher_id):
 			
 			if 'photo' in request.files:
 				photo = request.files['photo']
-				photo_name = 'teacher_' + str(teacher_id) + '.png'
+				photo_name = 'teacher_' + str(teacher_id) + '_' + str(get_timestamp()) + '.png'
 				photo_path = os.path.join(current_app.config['PROFILE_FOLDER'], photo_name)
 				photo.save(photo_path)
 				photo = photo_name
