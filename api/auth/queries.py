@@ -2,16 +2,38 @@
 
 from api import db
 from api.models import User, Teacher, Lesson_Question, \
-	Lesson_Answer, Lesson_Evaluation
+        Lesson_Answer, Lesson_Evaluation
+import api.auth.func as func
 
 from datetime import datetime
 
-def add_user(name, birthday, phone, photo, pushtoken):
+def add_user(name, birthday, phone, pushtoken, photo=None):
+	user = User(name, birthday, phone, pushtoken)
 	db.session.add(user)
 	db.session.commit()
 	if photo is not None:
-		user.photo = 'user_' + str(user.id) + '.png'
+		user.photo = func.get_user_photo_path(user.id)
 		db.session.commit()
+
+def get_user(user_id):
+	user = User.query.filter_by(id=user_id).first()
+
+	return user
+
+def update_user_photo(user_id, photo_path):
+	user = get_user(user_id)
+	user.photo = photo_path
+	db.session.commit()
+
+def get_teacher(teacher_id):
+	teacher = Teacher.query.filter_by(id=teacher).first()
+
+	return teacher
+
+def update_teacher_photo(teacher_id, photo_path):
+	teacher = get_teacher(teacher_id)
+	teacher.photo = photo_path
+	db.session.commit()
 
 def get_valid_user(name, birthday, phone):
 	user = User.query.filter_by(
@@ -23,9 +45,14 @@ def get_valid_user(name, birthday, phone):
 	return user
 
 def get_reg_id(user_id):
-        user=User.query.filter_by(
-                id=user_id).first()
-        return user.pushtoken
+	user = get_user(user_id)
+
+	return user.pushtoken
+
+def update_pushtoken(user_id,pushtoken):
+	user = get_user(user_id)
+	user.pushtoken = pushtoken
+	db.session.commit()                          
 
 def get_valid_teacher(name, birthday, phone):
 	teacher = Teacher.query.filter_by(
@@ -68,7 +95,7 @@ def get_score_evaluation(teacher_id):
 
 	return { 'count': count, 'speed': speed, 'accuracy': accuracy,
 		'price': price, 'recommend': recommend, 'average': average }
-	
+        
 def count_unconfirm_question(user_id):
 	questions = Lesson_Question.query.filter_by(
 		user_id=user_id, status=True)

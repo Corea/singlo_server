@@ -19,7 +19,8 @@
 			"id": {{ image.id }},
 			"number": {{ image.number }},
 			"image": "{{ image.image }}",
-			"line": "{{ image.line }}"
+			"line": "{{ image.line }}",
+			"timing": {{ image.timing }}
 		}
 		{% if not loop.last %},{% endif %}
 		{% endfor %}

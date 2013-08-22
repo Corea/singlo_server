@@ -18,12 +18,12 @@ class User(db.Model):
 	lastlogin_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
 	pushtoken = db.Column(db.String(200), nullable=True)
 	
-	def __init__(self, name, birthday, phone, photo=None, pushtoken=None,):
+	def __init__(self, name, birthday, phone, pushtoken, photo=None):
 		self.name = name
 		self.birthday = birthday
 		self.phone = phone
-		self.photo = photo
 		self.pushtoken = pushtoken
+		self.photo = photo
 
 	def set_password(password):
 		pass
@@ -153,12 +153,14 @@ class Lesson_Answer_Image(db.Model):
 	answer = db.relationship('Lesson_Answer')
 	image = db.Column(db.String(63), nullable=False)
 	line = db.Column(db.Text, nullable=False, default='')
+	timing = db.Column(db.Integer, nullable=False)
 
-	def __init__(self, number, answer_id, image, line):
+	def __init__(self, number, answer_id, image, line, timing):
 		self.number = number
 		self.answer_id = answer_id
 		self.image = image
 		self.line = line
+		self.timing = timing
 
 class Lesson_Evaluation(db.Model):
 	__tablename__ = 'singlo_lesson_evaluation'
