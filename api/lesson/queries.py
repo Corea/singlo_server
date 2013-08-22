@@ -24,6 +24,11 @@ def get_lesson_question(lesson_id):
 
 	return lesson
 
+def get_lesson_user_id(lesson_id):
+        lesson = Lesson_Question.query.filter_by(id=lesson_id).first()
+
+        return lesson.user_id
+
 def add_lesson_answer(lesson_answer):
 	db.session.add(lesson_answer)
 	db.session.commit()
