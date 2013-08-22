@@ -155,7 +155,7 @@ class Lesson_Answer_Image(db.Model):
 	line = db.Column(db.Text, nullable=False, default='')
 	timing = db.Column(db.Integer, nullable=False)
 
-	def __init__(self, number, answer_id, image, line, timing):
+	def __init__(self, number, answer_id, image, line):
 		self.number = number
 		self.answer_id = answer_id
 		self.image = image
