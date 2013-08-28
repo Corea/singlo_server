@@ -9,7 +9,6 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>ID</th>
 				<th>Name</th>
 				<th>Birthday</th>
 				<th>Phone Number</th>
@@ -24,15 +23,14 @@
 		<tbody>
 		{% for teacher in teachers %} 
 			<tr>
-				<td>{{ teacher.id }}</td>
 				<td>{{ teacher.name|decode }}</td>
 				<td>{{ teacher.birthday|decode }}</td>
 				<td>{{ teacher.phone|decode }}</td>
 				<td>{{ teacher.company|decode }}</td>
 				<td>{{ teacher.certification|decode }}</td>
 				<td>{{ teacher.price }}</td>
-				<td>{{ teacher.profile|decode }}</td>
-				<td>{{ teacher.url|decode }}</td>
+				<td><pre>{{ teacher.profile|decode }}</pre></td>
+				<td><a target="_blank" href="{{ teacher.url|decode }}">Link</a></td>
 				<td>
 					<a href="/teacher/modify/{{ teacher.id }}">수정</a>
 					<a href="/teacher/remove/{{ teacher.id }}">삭제</a>
@@ -42,7 +40,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="10"><a href="/teacher/add">추가하기</a></td>
+				<td colspan="9"><a href="/teacher/add">추가하기</a></td>
 			</tr>
 		</tfoot>
 	</table>

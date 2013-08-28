@@ -44,3 +44,15 @@ def lesson_status():
 		return render_template('success.json')
 	except:
 		return render_template('error.json')
+
+@mod.route('/update_absence', methods=['POST'])
+def update_absence():
+	try:
+		teacher_id = int(request.form['id'])
+		absence = request.form['absence']
+		queries.update_lesson_message(teacher_id, absence)
+		return render_template('success.json')
+	except Exception, e:
+		print e
+		return render_template('error.json')
+

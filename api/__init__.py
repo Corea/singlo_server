@@ -10,8 +10,8 @@ app.config.from_object('api.config')
 
 db = SQLAlchemy(app)
 db.init_app(app)
-with app.app_context():
-	db.create_all()
+#with app.app_context():
+#	db.create_all()
 
 #@app.errorhandler(404)
 #def not_found(error):

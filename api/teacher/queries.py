@@ -34,6 +34,11 @@ def make_lesson_status(teacher_id, status):
 	teacher.status = status
 	db.session.commit()
 
+def update_lesson_message(teacher_id, status_message):
+	teacher = get_teacher(teacher_id)
+	teacher.status_message = status_message
+	db.session.commit()
+
 def get_teacher_reg_id(teacher_id):
         teacher_id = Teacher.query.filter_by(id=teacher_id).first()
         reg_id=teacher_id.pushtoken

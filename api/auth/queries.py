@@ -26,7 +26,7 @@ def update_user_photo(user_id, photo_path):
 	db.session.commit()
 
 def get_teacher(teacher_id):
-	teacher = Teacher.query.filter_by(id=teacher).first()
+	teacher = Teacher.query.filter_by(id=teacher_id).first()
 
 	return teacher
 
@@ -49,10 +49,15 @@ def get_reg_id(user_id):
 
 	return user.pushtoken
 
-def update_pushtoken(user_id,pushtoken):
+def update_pushtoken_user(user_id, pushtoken):
 	user = get_user(user_id)
 	user.pushtoken = pushtoken
 	db.session.commit()                          
+
+def update_pushtoken_teacher(teacher_id, pushtoken):
+	teacher = get_teacher(teacher_id)
+	teacher.pushtoken = pushtoken
+	db.session.commit()
 
 def get_valid_teacher(name, birthday, phone):
 	teacher = Teacher.query.filter_by(

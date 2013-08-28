@@ -77,11 +77,11 @@ def ask_fast():
 
 @mod.route('/ask_slow', methods=['POST'])
 def ask_slow():
-	gcm=GCM('AIzaSyBDkxqu_qW1LofgPLhaSfUoRQIw16WOSY4')
+	gcm = GCM(current_app.config['GCM_APIKEY'])
 	try:
 		user_id = int(request.form['user_id'])
 		teacher_id_list = request.form.getlist('teacher_id[]')
-		lesson_type = True
+		lesson_type = False
 		video = None
 		club_type = int(request.form['club_type'])
 		question = request.form['question']
@@ -101,7 +101,8 @@ def ask_slow():
 			lesson_question_list.append(lesson_question)
 			reg_id=teacher_queries.get_teacher_reg_id(teacher_id)
 			if reg_id is not None:
-				gcm.plaintext_request(registration_id=reg_id, data={'message':'새로운 레슨 신청이 들어왔습니다.'})
+				gcm.plaintext_request(registration_id=reg_id, 
+					data={'message':'새로운 레슨 신청이 들어왔습니다.'})
 
 		#TODO: 파일 처리 완료 후 DB에 들어가게 설정
 
@@ -189,11 +190,12 @@ def answer():
 			queries.add_lesson_answer_image(lesson_answer_image)
 
 		# 회원에게 레슨 처리됨을 푸시로 알리기
-		gcm=GCM('AIzaSyBDkxqu_qW1LofgPLhaSfUoRQIw16WOSY4')
+		gcm = GCM(current_app.config['GCM_APIKEY'])
 		user_id = queries.get_lesson_user_id(lesson_id)
 		reg_id = auth_queries.get_reg_id(user_id)
 		if reg_id is not None and reg_id != '':
-			gcm.plaintext_request(registration_id=reg_id, data={'title':'싱글로','message':'신청한 레슨 강습이 완료되었습니다.'})           
+			gcm.plaintext_request(registration_id=reg_id, 
+				data={'title':'싱글로', 'message':'신청한 레슨 강습이 완료되었습니다.'})           
 
 
 		return render_template('success.json')

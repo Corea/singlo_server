@@ -48,22 +48,24 @@ def login():
 		name = request.form['name']
 		birthday = request.form['birthday']
 		phone = request.form['phone']
+		print name, birthday, phone
                                                     
 		user = queries.get_valid_user(name, birthday, phone)
-		if 'pushtoken' in request.form:
-			queries.update_pushtoken(user.id,request.form['pushtoken'])
-                                               
                 
 		if user is None:
 			teacher = queries.get_valid_teacher(name, birthday, phone)
 			if teacher is None:
 				raise
 			else:
+				if 'pushtoken' in request.form:
+					queries.update_pushtoken_teacher(teacher.id,request.form['pushtoken'])
 				count = queries.count_unanswer_question(teacher.id)
 				evaluation = queries.get_score_evaluation(teacher.id)
 				return render_template('login_teacher.json', 
 					teacher=teacher, count=count, evaluation=evaluation)
 		else:
+			if 'pushtoken' in request.form:
+				queries.update_pushtoken_user(user.id,request.form['pushtoken'])
 			count = queries.count_unconfirm_question(user.id)
 			return render_template('login.json', user=user, count=count)
 	except Exception, e:
