@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from api import db
-from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Lesson_Training
+from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image,\
+	Lesson_Training, Lesson_Evaluation
 
 def add_lesson_question_video(lesson_question):
 	db.session.add(lesson_question)
@@ -76,3 +77,11 @@ def add_lesson_evaluation(lesson_question, lesson_evaluation):
 	lesson_question.evaluation_status = True
 	db.session.add(lesson_evaluation)
 	db.session.commit()
+
+def get_all_evaluation(teacher_id):
+	evaluations = Lesson_Evaluation.query.filter_by(
+		teacher_id=teacher_id).all()
+
+	return evaluations
+		
+

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="user">
+{% endblock %}
+
+{% block main %}
+<form class="form-horizontal" action="/user/modify/{{ user_id }}" method="post" enctype="multipart/form-data">
+	<div>
+		<legend>User Modify</legend>
+	</div>
+	<div class="control-group error">
+		<div class="controls">
+			<ul>
+				{% for error in errors %}
+				<li>{{ error|decode }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_name">Name</label> 
+		<div class="controls">
+			<input type="text" id="id_name" name="name" value="{{ name }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_birthday">Birthday</label> 
+		<div class="controls">
+			<input type="text" id="id_birthday" name="birthday" value="{{ birthday }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_phone">Phone Number</label> 
+		<div class="controls">
+			<input type="text" id="id_phone" name="phone" value="{{ phone }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_photo">Profile Image</label> 
+		<div class="controls">
+			{% if photo %}
+			<div>
+				<img src="http://garagestory.cafe24.com:5000/profile/{{ photo }}" alt="profile image" width="300"><br>
+				<a href="/user/remove_photo/{{ user_id }}">사진 삭제하기</a>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">Modify</button>
+		</div>
+	</div>
+</form>
+{% endblock %}
+

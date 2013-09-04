@@ -80,6 +80,13 @@
 		</div>
 	</div>
 	<div class="control-group">
+		<label class="control-label" for="id_push">Push Status</label>
+		<div class="controls">
+			{% if push_active %} On {% else %} Off {% endif %}
+			<a href="/teacher/change_push/{{ teacher_id }}">(Toggle)</a><br>
+		</div>
+	</div>
+	<div class="control-group">
 		<div class="controls">
 			<button type="submit" class="btn">Modify</button>
 		</div>

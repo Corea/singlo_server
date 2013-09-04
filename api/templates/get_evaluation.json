@@ -1,0 +1,13 @@
+{
+	"evaluations": [
+	{% for evaluation in evaluations %}
+		{
+			"id": {{ evaluation.id }},
+			"user_name": "{{ evaluation.question.user.name }}",
+			"user_photo": "{{ evaluation.question.user.photo }}",
+			"review": "{{ evaluation.review }}",
+			"created_datetime": "{{ evaluation.created_datetime.strftime('%Y.%m.%d %H:%M') }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

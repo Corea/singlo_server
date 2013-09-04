@@ -41,5 +41,9 @@ def god():
 
 
 from god.teacher.views import mod as teacherModule
+from god.user.views import mod as userModule
+from god.order.views import mod as orderModule
 app.register_blueprint(teacherModule)
+app.register_blueprint(userModule)
+app.register_blueprint(orderModule)
 

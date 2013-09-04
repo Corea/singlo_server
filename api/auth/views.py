@@ -21,6 +21,11 @@ def register():
 		else:
 			pushtoken = None
 
+		if 'model' in request.form:
+			phone_model = request.form['model']
+		else:
+			phone_model = None
+
 		if 'profile' in request.files:
 			profile = request.files['profile']
 		else:
@@ -29,7 +34,7 @@ def register():
 		user = queries.get_valid_user(name, birthday, phone)
 		teacher = queries.get_valid_teacher(name, birthday, phone)
 		if user is None and teacher is None:
-			queries.add_user(name, birthday, phone, pushtoken, profile)
+			queries.add_user(name, birthday, phone, pushtoken, profile, phone_model)
 			user = queries.get_valid_user(name, birthday, phone)
 			if profile is not None:
 				profile_path = os.path.join(current_app.config['PROFILE_FOLDER'], user.photo)
@@ -48,7 +53,6 @@ def login():
 		name = request.form['name']
 		birthday = request.form['birthday']
 		phone = request.form['phone']
-		print name, birthday, phone
                                                     
 		user = queries.get_valid_user(name, birthday, phone)
                 
@@ -58,14 +62,18 @@ def login():
 				raise
 			else:
 				if 'pushtoken' in request.form:
-					queries.update_pushtoken_teacher(teacher.id,request.form['pushtoken'])
+					queries.update_pushtoken_teacher(teacher.id, request.form['pushtoken'])
+				if 'model' in request.form:
+					queries.update_phone_model_teacher(teacher.id, request.form['model'])
 				count = queries.count_unanswer_question(teacher.id)
 				evaluation = queries.get_score_evaluation(teacher.id)
 				return render_template('login_teacher.json', 
 					teacher=teacher, count=count, evaluation=evaluation)
 		else:
 			if 'pushtoken' in request.form:
-				queries.update_pushtoken_user(user.id,request.form['pushtoken'])
+				queries.update_pushtoken_user(user.id, request.form['pushtoken'])
+			if 'model' in request.form:
+				queries.update_phone_model_user(user.id, request.form['model'])
 			count = queries.count_unconfirm_question(user.id)
 			return render_template('login.json', user=user, count=count)
 	except Exception, e:
@@ -96,6 +104,16 @@ def profile():
 		else:
 			raise
 		return render_template('profile.json', photo_path=photo_path)
+	except Exception, e:
+		print e
+		return render_template('error.json')
+
+@mod.route('/get_user_profile', methods=['POST'])
+def get_user_profile():
+	try:
+		user_id = request.form['user_id']
+		user = queries.get_user(user_id)
+		return render_template('get_user_profile.json', user=user)
 	except Exception, e:
 		print e
 		return render_template('error.json')

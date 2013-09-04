@@ -1,4 +1,5 @@
 {
+	"result": "success",
 	"type": "teacher",
 	"id": {{ teacher.id }},
 	"photo": "{{ teacher.photo or '' }}",

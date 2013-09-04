@@ -40,7 +40,9 @@ def update_lesson_message(teacher_id, status_message):
 	db.session.commit()
 
 def get_teacher_reg_id(teacher_id):
-        teacher_id = Teacher.query.filter_by(id=teacher_id).first()
-        reg_id=teacher_id.pushtoken
+	teacher = get_teacher(teacher_id)
+	reg_id = None
+	if teacher.push_active:
+		reg_id = teacher_id.pushtoken
 
-        return reg_id
+	return reg_id

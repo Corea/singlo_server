@@ -8,12 +8,27 @@ import god.teacher.queries as queries
 from god import urldecode
 from api.auth.func import get_timestamp
 
-import urllib
 import os
 
 mod = Blueprint('teacher', __name__, url_prefix='/teacher')
 
+
+# DECORATOR START
+from flask import make_response
+from functools import update_wrapper
+
+def nocache(f):
+	def new_func(*args, **kwargs):
+		resp = make_response(f(*args, **kwargs))
+		resp.cache_control.no_cache = True
+		return resp
+	return update_wrapper(new_func, f)
+# DECORATOR END
+
+
+
 @mod.route('/')
+@nocache
 @login_required
 def list():
 	teachers = queries.get_active_teacher()
@@ -81,6 +96,7 @@ def add():
 
 @mod.route('/modify/<int:teacher_id>', methods=['GET', 'POST'])
 @login_required
+@nocache
 def modify(teacher_id):
 	try:
 		teacher = queries.get_teacher(teacher_id)
@@ -108,7 +124,7 @@ def modify(teacher_id):
 			profile = request.form['profile'].strip()
 			url = request.form['url'].strip()
 			
-			if 'photo' in request.files:
+			if 'photo' in request.files and request.files['photo']:
 				photo = request.files['photo']
 				photo_name = 'teacher_' + str(teacher_id) + '_' + str(get_timestamp()) + '.png'
 				photo_path = os.path.join(current_app.config['PROFILE_FOLDER'], photo_name)
@@ -144,8 +160,10 @@ def modify(teacher_id):
 		return render_template('teacher_modify.html', name=name,
 			birthday=birthday, phone=phone, company=company,
 			certification=certification, price=price, profile=profile, 
-			url=url, photo=photo, errors=errors, teacher_id=teacher_id)
-	except:
+			url=url, photo=photo, errors=errors, teacher_id=teacher_id, 
+			push_active=teacher.push_active)
+	except Exception, e:
+		print e
 		return redirect(url_for('teacher.list'))
 	
 
@@ -162,3 +180,9 @@ def remove_photo(teacher_id):
 	queries.delete_photo(teacher_id)
 	return redirect(url_for('teacher.modify', teacher_id=teacher_id))
 
+@mod.route('/change_push/<int:teacher_id>')
+@nocache
+@login_required
+def change_push(teacher_id):
+	queries.change_push(teacher_id)
+	return redirect(url_for('teacher.modify', teacher_id=teacher_id))

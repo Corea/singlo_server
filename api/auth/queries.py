@@ -7,8 +7,8 @@ import api.auth.func as func
 
 from datetime import datetime
 
-def add_user(name, birthday, phone, pushtoken, photo=None):
-	user = User(name, birthday, phone, pushtoken)
+def add_user(name, birthday, phone, pushtoken, photo=None, phone_model=None):
+	user = User(name, birthday, phone, pushtoken, phone_model)
 	db.session.add(user)
 	db.session.commit()
 	if photo is not None:
@@ -37,7 +37,7 @@ def update_teacher_photo(teacher_id, photo_path):
 
 def get_valid_user(name, birthday, phone):
 	user = User.query.filter_by(
-		name=name, birthday=birthday, phone=phone).first()
+		name=name, birthday=birthday, phone=phone, active=True).first()
 	if user is not None:
 		user.lastlogin_datetime = datetime.now()
 		db.session.commit()
@@ -58,6 +58,17 @@ def update_pushtoken_teacher(teacher_id, pushtoken):
 	teacher = get_teacher(teacher_id)
 	teacher.pushtoken = pushtoken
 	db.session.commit()
+
+def update_phone_model_user(user_id, phone_model):
+	user = get_user(user_id)
+	user.phone_model = phone_model
+	db.session.commit()                          
+
+def update_phone_model_teacher(teacher_id, phone_model):
+	teacher = get_teacher(teacher_id)
+	teacher.phone_model = phone_model
+	db.session.commit()
+
 
 def get_valid_teacher(name, birthday, phone):
 	teacher = Teacher.query.filter_by(

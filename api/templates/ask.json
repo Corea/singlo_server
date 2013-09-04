@@ -1,0 +1,4 @@
+{
+	"result": "success",
+	"lesson_id": {{ lesson.id }}
+}
