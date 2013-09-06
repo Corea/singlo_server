@@ -6,7 +6,7 @@ from api.auth.func import get_timestamp
 
 import urllib
 
-def get_all_teacher():
+def get_all_lessons():
 	lessons = Lesson_Question.query.all()
 
 	return lessons

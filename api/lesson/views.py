@@ -110,6 +110,9 @@ def ask_fast():
 def ask_slow():
 	gcm = GCM(current_app.config['GCM_APIKEY'])
 	try:
+		print request.form
+		print request.files
+
 		user_id = int(request.form['user_id'])
 		teacher_id_list = request.form.getlist('teacher_id[]')
 		lesson_type = False
@@ -117,8 +120,8 @@ def ask_slow():
 		club_type = int(request.form['club_type'])
 		question = request.form['question']
 
-		if 'video' not in request.files or not request.files['video']:
-			raise
+		#if 'video' not in request.files or not request.files['video']:
+		#	raise
 
 		lesson_question_list = []
 		for teacher_id in teacher_id_list:
@@ -299,11 +302,14 @@ def answer():
 
 		# 회원에게 레슨 처리됨을 푸시로 알리기
 		gcm = GCM(current_app.config['GCM_APIKEY'])
-		user_id = queries.get_lesson_user_id(lesson_id)
-		reg_id = auth_queries.get_reg_id(user_id)
-		if reg_id is not None and reg_id != '':
-			gcm.plaintext_request(registration_id=reg_id, 
-				data={'title':'싱글로', 'message':'신청한 레슨 강습이 완료되었습니다.'})           
+		try:
+			user_id = queries.get_lesson_user_id(lesson_id)
+			reg_id = auth_queries.get_reg_id(user_id)
+			if reg_id is not None and reg_id != '':
+				gcm.plaintext_request(registration_id=reg_id, 
+					data={'title':'싱글로', 'message':'신청한 레슨 강습이 완료되었습니다.'})
+		except:
+			pass
 
 
 		return render_template('success.json')

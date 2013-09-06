@@ -16,6 +16,8 @@ def register():
 		name = request.form['name']
 		birthday = request.form['birthday']
 		phone = request.form['phone']
+		if len(name) > 128 or len(birthday) > 31 or len(phone) > 31:
+			raise
 		if 'pushtoken' in request.form:
 			pushtoken = request.form['pushtoken']
 		else:

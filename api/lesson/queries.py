@@ -80,7 +80,7 @@ def add_lesson_evaluation(lesson_question, lesson_evaluation):
 
 def get_all_evaluation(teacher_id):
 	evaluations = Lesson_Evaluation.query.filter_by(
-		teacher_id=teacher_id).all()
+		teacher_id=teacher_id).order_by('-id').all()
 
 	return evaluations
 		
