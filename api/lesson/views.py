@@ -17,6 +17,7 @@ import Image
 mod = Blueprint('lesson', __name__, url_prefix='/lesson')
 
 
+# FUNCTION START
 def get_video_rotation(file_path):
 	rotation = 0
 	try:
@@ -56,6 +57,32 @@ def get_recommend_by_cause(cause_id):
 	elif cause_id == 11:
 		return [14, 14, 25, 43, 46, 46, 47]
 	return [0]
+
+def get_video_capture(file_path, current_time, target_name=None):
+	if target_name is None:
+		temp_name = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(50))
+		temp_name += '.png'
+	else:
+		temp_name = target_name
+
+	temp_path = os.path.join(current_app.config['CAPTURE_FOLDER'], temp_name)
+
+	rotation = get_video_rotation(file_path)
+
+	os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
+
+	image = Image.open(temp_path)
+	image = image.rotate(float(rotation))
+	width, height = image.size
+	if width > 360: 
+		height = int(height / (width / 360.))
+		width = 360
+		image = image.resize((width, height), Image.ANTIALIAS)
+	image.save(temp_path)
+
+	return temp_name
+
+# FUNCTION END
 
 
 
@@ -110,18 +137,16 @@ def ask_fast():
 def ask_slow():
 	gcm = GCM(current_app.config['GCM_APIKEY'])
 	try:
-		print request.form
-		print request.files
-
 		user_id = int(request.form['user_id'])
 		teacher_id_list = request.form.getlist('teacher_id[]')
 		lesson_type = False
 		video = None
+		thumbnail = None
 		club_type = int(request.form['club_type'])
 		question = request.form['question']
 
-		#if 'video' not in request.files or not request.files['video']:
-		#	raise
+		if 'video' not in request.files or not request.files['video']:
+			raise
 
 		lesson_question_list = []
 		for teacher_id in teacher_id_list:
@@ -132,7 +157,9 @@ def ask_slow():
 			if video is None:
 				lesson_question = queries.add_lesson_question_video(lesson_question)
 				video = lesson_question.video
+				thumbnail = lesson_question.thumbnail
 			else:
+				lesson_question.thumbnail = thumbnail
 				lesson_question = queries.add_lesson_question(lesson_question)
 
 			lesson_question_list.append(lesson_question)
@@ -166,6 +193,8 @@ def ask_slow():
 			with open(file_path): pass
 		except:
 			os.system("mv %s %s" % (temp_file_path, file_path))
+
+		get_video_capture(file_path, 0, thumbnail)
 
 		return render_template('success.json')
 	except Exception, e:
@@ -311,7 +340,6 @@ def answer():
 		except:
 			pass
 
-
 		return render_template('success.json')
 	except Exception, e:
 		print e
@@ -340,7 +368,7 @@ def get_answer():
 		lesson=lesson, images=images, recommends=recommends)
 
 @mod.route('/get_video_capture', methods=['POST'])
-def get_video_capture():
+def post_get_video_capture():
 	try:
 		lesson_id = int(request.form['lesson_id'])
 		current_position = int(request.form['current_position'])
@@ -350,33 +378,8 @@ def get_video_capture():
 
 		lesson_question = queries.get_lesson_question(lesson_id)
 		file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], lesson_question.video)
-
-		temp_name = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(50))
-		temp_name += '.png'
-		temp_path = os.path.join(current_app.config['CAPTURE_FOLDER'], temp_name)
-
-		rotation = 0
-		try:
-			os.system('mediainfo %s | grep Rotation > /tmp/%s' % (file_path, temp_name))
-			f = open("/tmp/%s" % temp_name, "r")
-			rotation = f.read()
-			f.close()
-			rotation = rotation.split(' : ')[1].strip()[:-2]
-			rotation = 360 - int(rotation)
-		except:
-			rotation = 0
-
-		os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
-
-		image = Image.open(temp_path)
-		image = image.rotate(float(rotation))
-		width, height = image.size
-		if width > 360: 
-			height = int(height / (width / 360.))
-			width = 360
-			image = image.resize((width, height), Image.ANTIALIAS)
-		image.save(temp_path)
-
+		
+		temp_name = get_video_capture(file_path, current_time)
 		return render_template('get_video_capture.json', path=temp_name)
 	except Exception, e:
 		print e

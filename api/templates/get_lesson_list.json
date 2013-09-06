@@ -11,6 +11,7 @@
 			"video": "{{ lesson.video }}",
 			"club_type": {{ lesson.club_type }},
 			"question": "{{ lesson.question }}",
+			"thumbnail": "{{ lesson.thumbnail }}",
 			"confirm_status": {{ lesson.confirm_status or False }},
 			"evaluation_status": {{ lesson.evaluation_status or False }},
 			"created_datetime": "{{ lesson.created_datetime.strftime('%Y.%m.%d %H:%M') }}"

@@ -94,6 +94,7 @@ class Lesson_Question(db.Model):
 	status = db.Column(db.Boolean, nullable=False)
 	lesson_type = db.Column(db.Boolean, nullable=False)
 	video = db.Column(db.String(63), nullable=True, default=None)
+	thumbnail = db.Column(db.String(128), nullable=True, default=None)
 	club_type = db.Column(db.Integer, nullable=False)
 	question = db.Column(db.Text, nullable=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
