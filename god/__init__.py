@@ -37,13 +37,21 @@ def urldecode(text):
 @app.route("/")
 @login_required
 def god():
-	return render_template('index.html')
+	versions = models.Version.query.all()
+
+	return render_template('index.html', versions=versions)
 
 
 from god.teacher.views import mod as teacherModule
 from god.user.views import mod as userModule
 from god.order.views import mod as orderModule
+from god.event.views import mod as eventModule
+from god.notice.views import mod as noticeModule
+from god.qna.views import mod as qnaModule
 app.register_blueprint(teacherModule)
 app.register_blueprint(userModule)
 app.register_blueprint(orderModule)
+app.register_blueprint(eventModule)
+app.register_blueprint(noticeModule)
+app.register_blueprint(qnaModule)
 

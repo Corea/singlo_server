@@ -13,5 +13,6 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:singlogolf@34@localhost/garagestory'
 UPLOAD_FOLDER = '/home/garagestory/singlo_server/api/video' #os.path.join(os.getcwd(), 'api/video')
 CAPTURE_FOLDER = '/home/garagestory/singlo_server/api/capture' #os.path.join(os.getcwd(), 'api/capture')
 PROFILE_FOLDER = '/home/garagestory/singlo_server/api/profile' #os.path.join(os.getcwd(), 'api/profile')
+EVENT_FOLDER = '/home/garagestory/singlo_server/api/event' #os.path.join(os.getcwd(), 'api/event')
 
 GCM_APIKEY = 'AIzaSyBDkxqu_qW1LofgPLhaSfUoRQIw16WOSY4'

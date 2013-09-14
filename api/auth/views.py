@@ -20,15 +20,27 @@ def version_android():
 		print e
 		return render_template('error.json')
 
+@mod.route('/event')
+def event():
+	try:
+		events = queries.get_valid_event()
+
+		return render_template('event.json', events=events)
+	except Exception as e:
+		print e
+		return render_template('error.json')
 
 @mod.route('/register', methods=['POST'])
 def register():
 	try:
-		name = request.form['name']
-		birthday = request.form['birthday']
-		phone = request.form['phone']
+		name = request.form['name'].strip()
+		birthday = request.form['birthday'].strip()
+		phone = request.form['phone'].strip()
 		if len(name) > 128 or len(birthday) > 31 or len(phone) > 31:
 			raise
+		if len(name) == 0 or len(birthday) != 6 or len(phone) < 9:
+			raise
+
 		if 'pushtoken' in request.form:
 			pushtoken = request.form['pushtoken']
 		else:

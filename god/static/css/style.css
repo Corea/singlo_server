@@ -1,6 +1,10 @@
 body.home li.nav-home > a,
 body.teacher li.nav-teacher > a,
-body.user li.nav-user > a{
+body.user li.nav-user > a,
+body.order li.nav-order > a,
+body.event li.nav-event > a,
+body.notice li.nav-notice > a,
+body.qna li.nav-qna > a {
 	color: #ffffff;
 	background-color: #111111;
 }

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="event">
+{% endblock %}
+
+{% block main %}
+<form class="form-horizontal" action="/event/add" method="post" enctype="multipart/form-data">
+	<div>
+		<legend>Event Add</legend>
+	</div>
+	<div class="control-group error">
+		<div class="controls">
+			<ul>
+				{% for error in errors %}
+				<li>{{ error|decode }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_start">Start Datetime</label> 
+		<div class="controls">
+			<input type="text" id="id_start" name="start" value="{{ start }}">
+			<span class="help-block">"YYYY-MM-DD HH:II" 형태. Example) 2013-02-23 19:03</span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_end">Start Datetime</label> 
+		<div class="controls">
+			<input type="text" id="id_end" name="end" value="{{ end }}">
+			<span class="help-block">"YYYY-MM-DD HH:II" 형태. Example) 2013-02-23 19:03</span>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_image">Event Image</label> 
+		<div class="controls">
+			<input type="file" id="id_image" name="image" class="input-large">
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">Add</button>
+		</div>
+	</div>
+</form>
+{% endblock %}
+

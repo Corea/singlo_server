@@ -1,2 +1,24 @@
 {% extends "base.html" %}
 
+
+{% block main %}
+<h3>Version Information</h3>
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Version</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for version in versions %}
+			<tr>
+				<td>{{ version.app_name }}</td>
+				<td>{{ version.app_version }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

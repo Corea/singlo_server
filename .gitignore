@@ -40,3 +40,4 @@ nosetests.xml
 video
 capture
 profile
+event

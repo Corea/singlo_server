@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="notice">
+{% endblock %}
+
+{% block main %}
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Title</th>
+				<th>Created</th>
+				<th>Modified</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for notice in notices %} 
+			<tr>
+				<td>{{ notice.id }}</td>
+				<td>{{ notice.title|decode }}</td>
+				<td>{{ notice.created_datetime }}</td>
+				<td>{{ notice.modified_datetime }}</td>
+				<td>
+					<a href="/notice/modify/{{ notice.id }}">수정</a>
+					<a href="/notice/remove/{{ notice.id }}">삭제</a>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4"><a href="/notice/add">추가하기</a></td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+{% endblock %}

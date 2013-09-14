@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="qna">
+{% endblock %}
+
+{% block main %}
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Title</th>
+				<th>Created</th>
+				<th>Modified</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for qna in qnas %} 
+			<tr>
+				<td>{{ qna.id }}</td>
+				<td>{{ qna.title|decode }}</td>
+				<td>{{ qna.created_datetime }}</td>
+				<td>{{ qna.modified_datetime }}</td>
+				<td>
+					<a href="/qna/modify/{{ qna.id }}">수정</a>
+					<a href="/qna/remove/{{ qna.id }}">삭제</a>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4"><a href="/qna/add">추가하기</a></td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+{% endblock %}

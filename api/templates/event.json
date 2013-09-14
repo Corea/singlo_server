@@ -1,0 +1,10 @@
+{ 
+	"events": [
+	{% for event in events %}
+		{ 
+			"id": {{ event.id }},
+			"image": "{{ event.image }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

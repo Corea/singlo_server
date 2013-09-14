@@ -26,8 +26,8 @@
 				<td>{% if lesson.0.status %}Complete{% else %}Not Yet{% endif %}</th>
 				<td>{{ lesson.0.created_datetime }}</td>
 				<td>
-					<a href="/lesson/modify/{{ lesson.id }}">수정</a><br>
-					<a href="/lesson/remove/{{ lesson.id }}">삭제</a><br>
+					<a href="/lesson/modify/{{ lesson.id }}">수정</a>
+					<a href="/lesson/remove/{{ lesson.id }}">삭제</a>
 				</td>
 			</tr>
 		{% endfor %}

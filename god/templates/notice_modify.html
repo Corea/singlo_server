@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body %}
+<body class="notice">
+{% endblock %}
+
+{% block main %}
+<form class="form-horizontal" action="/notice/modify/{{ notice_id }}" method="post" enctype="multipart/form-data">
+	<div>
+		<legend>Notice Modify</legend>
+	</div>
+	<div class="control-group error">
+		<div class="controls">
+			<ul>
+				{% for error in errors %}
+				<li>{{ error|decode }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_title">Title</label> 
+		<div class="controls">
+			<input type="text" id="id_title" name="title" value="{{ title }}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="id_content">Content</label> 
+		<div class="controls">
+			<textarea name="content" rows="7" class="input-xxlarge">{{ content }}</textarea>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">Modify</button>
+		</div>
+	</div>
+</form>
+{% endblock %}
+

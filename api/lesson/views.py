@@ -55,7 +55,7 @@ def get_recommend_by_cause(cause_id):
 	elif cause_id == 10:
 		return [14, 25, 30, 31, 35, 38, 43, 46, 47, 48, 49, 50]
 	elif cause_id == 11:
-		return [14, 14, 25, 43, 46, 46, 47]
+		return [14, 25, 43, 46, 47]
 	return [0]
 
 def get_video_capture(file_path, current_time, target_name=None):

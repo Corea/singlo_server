@@ -29,6 +29,10 @@ def captured_file(filename):
 def profile_file(filename):
 	return send_from_directory(app.config['PROFILE_FOLDER'], filename)
 
+@app.route('/event/<filename>')
+def event_file(filename):
+	return send_from_directory(app.config['EVENT_FOLDER'], filename)
+
 from api.auth.views import mod as authModule
 from api.teacher.views import mod as teacherModule
 from api.lesson.views import mod as lessonModule

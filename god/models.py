@@ -14,6 +14,47 @@ class Version(db.Model):
 	app_name = db.Column(db.String(128), nullable=False, primary_key=True)
 	app_version = db.Column(db.String(64), nullable=False)
 
+class Event(db.Model):
+	__tablename__ = 'singlo_event'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	image = db.Column(db.String(128), nullable=True)
+	start_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	end_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+	def __init__(self):
+		pass
+
+class Notice(db.Model):
+	__tablename__ = 'singlo_notice'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(128), nullable=False)
+	content = db.Column(db.Text, nullable=False)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	modified_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	
+	def __init__(self, title, content):
+		self.title = title
+		self.content = content
+
+class Qna(db.Model):
+	__tablename__ = 'singlo_qna'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(128), nullable=False)
+	content = db.Column(db.Text, nullable=False)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	modified_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	
+	def __init__(self, title, content):
+		self.title = title
+		self.content = content
+
 class User(db.Model):
 	__tablename__ = 'singlo_user'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
