@@ -67,12 +67,10 @@ def get_video_capture(file_path, current_time, target_name=None):
 
 	temp_path = os.path.join(current_app.config['CAPTURE_FOLDER'], temp_name)
 
-	rotation = get_video_rotation(file_path)
 
 	os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
 
 	image = Image.open(temp_path)
-	image = image.rotate(float(rotation))
 	width, height = image.size
 	if width > 360: 
 		height = int(height / (width / 360.))
@@ -180,15 +178,15 @@ def ask_slow():
 		rotation = get_video_rotation(temp_file_path)
 		print rotation
 
-		option = 'setpts=4.0*PTS'
-		if rotation == 90:
-			option += ',transpose=1'
-		elif rotation == 180:
-			option += ',vflip,hflip'
-		elif rotation == 270:
-			option += ',transpose=2'
+		option = 'setpts=4.0*PTS,scale=iw/2:-1'
+#		if rotation == 90:
+#			option += ',transpose=1'
+#		elif rotation == 180:
+#			option += ',vflip,hflip'
+#		elif rotation == 270:
+#			option += ',transpose=2'
 
-		os.system("/usr/local/bin/ffmpeg -i %s -filter:v '%s' %s" % (temp_file_path, option, file_path))
+		os.system("/usr/local/bin/ffmpeg -i %s -vpre singlo -filter:v '%s' -an -f mp4 %s" % (temp_file_path, option, file_path))
 		try:
 			with open(file_path): pass
 		except:
@@ -257,7 +255,7 @@ def ask_slow_solo():
 				elif rotation == 270:
 					option += ',transpose=2'
 
-				os.system("/usr/local/bin/ffmpeg -i %s -filter:v '%s' %s" % (temp_file_path, option, file_path))
+				os.system("/usr/local/bin/ffmpeg -i %s -filter:v '%s' -y -an  -vpre singlo -f mp4 -threads 0 %s" % (temp_file_path, option, file_path))
 			except:
 				pass
 
@@ -401,8 +399,7 @@ def evaluation():
 			recommend = False
 
 		lesson_question = queries.get_lesson_question(lesson_id)
-		lesson_answer = queries.get_lesson_answer(lesson_id)
-		if lesson_answer.evaluation_status:
+		if lesson_question.evaluation_status:
 			raise
 
 		lesson_evaluation = Lesson_Evaluation(lesson_question.id, 

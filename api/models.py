@@ -5,6 +5,16 @@ from api import db
 from datetime import datetime
 
 
+class Version(db.Model):
+	__tablename__ = 'singlo_version'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	app_name = db.Column(db.String(128), nullable=False, primary_key=True)
+	app_version = db.Column(db.String(64), nullable=False)
+
+	def __init__(self):
+		pass
+
 class User(db.Model):
 	__tablename__ = 'singlo_user'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
@@ -97,6 +107,7 @@ class Lesson_Question(db.Model):
 	thumbnail = db.Column(db.String(128), nullable=True, default=None)
 	club_type = db.Column(db.Integer, nullable=False)
 	question = db.Column(db.Text, nullable=False)
+	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 	def __init__(self, user_id, teacher_id, status, lesson_type, video, club_type, question):
@@ -129,7 +140,6 @@ class Lesson_Answer(db.Model):
 	recommend1 = db.Column(db.Integer, nullable=False, default=0)
 	recommend2 = db.Column(db.Integer, nullable=False, default=0)
 	confirm_status = db.Column(db.Boolean, nullable=False, default=False)
-	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 	def __init__(self, question_id, score1, score2, score3, score4, score5, 

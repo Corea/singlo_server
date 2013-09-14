@@ -10,6 +10,17 @@ import os
 
 mod = Blueprint('auth', __name__, url_prefix='/auth')
 
+@mod.route('/version_android')
+def version_android():
+	try:
+		version = queries.get_version_android()
+
+		return render_template('version.json', version=version)
+	except Exception as e:
+		print e
+		return render_template('error.json')
+
+
 @mod.route('/register', methods=['POST'])
 def register():
 	try:

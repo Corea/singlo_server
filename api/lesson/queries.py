@@ -7,7 +7,7 @@ from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image,\
 def add_lesson_question_video(lesson_question):
 	db.session.add(lesson_question)
 	db.session.commit()
-	lesson_question.video = str(lesson_question.id) + '_question.avi'
+	lesson_question.video = str(lesson_question.id) + '_question.mp4'
 	lesson_question.thumbnail = str(lesson_question.id) + '_capture.png'
 	db.session.commit()
 

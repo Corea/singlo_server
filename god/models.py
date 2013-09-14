@@ -7,6 +7,13 @@ from flask.ext.security import UserMixin, RoleMixin
 from datetime import datetime
 
 
+class Version(db.Model):
+	__tablename__ = 'singlo_version'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	app_name = db.Column(db.String(128), nullable=False, primary_key=True)
+	app_version = db.Column(db.String(64), nullable=False)
+
 class User(db.Model):
 	__tablename__ = 'singlo_user'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}

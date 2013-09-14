@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from api import db
-from api.models import User, Teacher, Lesson_Question, \
+from api.models import Version, User, Teacher, Lesson_Question, \
         Lesson_Answer, Lesson_Evaluation
 import api.auth.func as func
 
 from datetime import datetime
+
+def get_version_android():
+	version = Version.query.filter_by(app_name='singlo_android').first()
+
+	return version
 
 def add_user(name, birthday, phone, pushtoken, photo=None, phone_model=None):
 	user = User(name, birthday, phone, pushtoken, phone_model)
