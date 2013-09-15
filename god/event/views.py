@@ -50,10 +50,9 @@ def add():
 
 		if len(errors) == 0: 
 			event = queries.add_event(start_datetime, end_datetime, image)
+			image_path = os.path.join(current_app.config['EVENT_FOLDER'], event.image)
+			image.save(image_path)
 
-			if image is not None:
-				image_path = os.path.join(current_app.config['EVENT_FOLDER'], event.image)
-				image.save(image_path)
 			return redirect(url_for('event.list'))
 	else:
 		start = ''
@@ -62,6 +61,56 @@ def add():
 
 	return render_template('event_add.html', 
 		start=start, end=end, errors=errors)
+
+@mod.route('/modify/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def modify(event_id):
+	try:
+		event = queries.get_event(event_id)
+		format = "%Y-%m-%d %H:%M"
+
+		if request.method == 'GET':
+			start = datetime.strftime(event.start_datetime, format)
+			end = datetime.strftime(event.end_datetime, format)
+			errors = []
+		else:
+			start = request.form['start'].strip()
+			end = request.form['end'].strip()
+			
+			errors = []
+
+
+			try:
+				start_datetime = datetime.strptime(start, format)
+			except:
+				errors.append('시작 시간이 잘못되었습니다.')
+
+			try:
+				end_datetime = datetime.strptime(end, format)
+			except:
+				errors.append('종료 시간이 잘못되었습니다.')
+
+			if 'image' in request.files and request.files['image']:
+				image = request.files['image']
+			else:
+				image = None
+
+			if len(errors) == 0: 
+				event = queries.modify_event(event, start_datetime, end_datetime, image)
+
+				if image is not None:
+					image_path = os.path.join(current_app.config['EVENT_FOLDER'], event.image)
+					image.save(image_path)
+				return redirect(url_for('event.list'))
+
+		return render_template('event_modify.html', event_id=event.id, 
+			start=start, end=end, errors=errors, image=event.image)
+	except Exception, e:
+		print e
+		return redirect(url_for('teacher.list'))
+	
+
+
 
 @mod.route('/remove/<int:event_id>')
 @login_required

@@ -27,6 +27,15 @@ def add_event(start_datetime, end_datetime, image):
 
 	return event
 
+def modify_event(event, start_datetime, end_datetime, image=None):
+	event.start_datetime = start_datetime
+	event.end_datetime = end_datetime
+	if image is not None:
+		event.image = 'event_' + str(event.id) + '_' + str(get_timestamp()) + '.png'
+	god_db.session.commit()
+
+	return event
+
 def delete_event(event_id):
 	event = get_event(event_id)
 	god_db.session.delete(event)
