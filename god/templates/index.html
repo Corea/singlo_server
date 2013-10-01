@@ -7,15 +7,15 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>Name</th>
-				<th>Version</th>
+				<th>Key</th>
+				<th>Value</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for version in versions %}
+			{% for environment in environments %}
 			<tr>
-				<td>{{ version.app_name }}</td>
-				<td>{{ version.app_version }}</td>
+				<td>{{ environment.key }}</td>
+				<td>{{ environment.value }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>

@@ -1,4 +1,4 @@
 {
 	"result": "success",
-	"version": "{{ version.app_version }}"
+	"version": "{{ version }}"
 }

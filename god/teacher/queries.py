@@ -71,10 +71,10 @@ def delete_photo(id):
 	teacher.photo = None
 	god_db.session.commit()
 
-def change_push(id):
+def change_status(id):
 	teacher = get_teacher(id)
-	if teacher.push_active:
-		teacher.push_active = False
+	if teacher.status:
+		teacher.status = False
 	else:
-		teacher.push_active = True
+		teacher.status = True
 	god_db.session.commit()

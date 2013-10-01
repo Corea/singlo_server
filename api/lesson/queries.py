@@ -20,6 +20,12 @@ def add_lesson_question(lesson_question):
 	return lesson_question
 
 
+def set_lesson_purchase_token(lesson_question, token):
+	lesson_question.purchase_token = token
+	db.session.commit()
+
+	return lesson_question
+
 def get_lesson_question(lesson_id):
 	lesson = Lesson_Question.query.filter_by(
 		id=lesson_id).first()
@@ -27,9 +33,10 @@ def get_lesson_question(lesson_id):
 	return lesson
 
 def get_lesson_user_id(lesson_id):
-        lesson = Lesson_Question.query.filter_by(id=lesson_id).first()
+	lesson = Lesson_Question.query.filter_by(
+		id=lesson_id).first()
 
-        return lesson.user_id
+	return lesson.user_id
 
 def add_lesson_answer(lesson_answer):
 	db.session.add(lesson_answer)
@@ -59,9 +66,11 @@ def get_lesson_answer_image(answer_id):
 
 def get_all_lesson(teacher_id):
 	lessons1 = Lesson_Question.query.filter_by(
-		teacher_id=teacher_id).all()
+		teacher_id=teacher_id).filter(
+		Lesson_Question.purchase_token!=None).all()
 	lessons2 = Lesson_Question.query.filter_by(
-		teacher_id=None, status=False).all()
+		teacher_id=None, status=False).filter(
+		Lesson_Question.purchase_token!=None).all()
 
 	lessons = lessons1 + lessons2 
 
@@ -69,7 +78,8 @@ def get_all_lesson(teacher_id):
 
 def get_all_lesson_by_user(user_id):
 	lessons = Lesson_Question.query.filter_by(
-		user_id=user_id).all()
+		user_id=user_id).filter(
+		Lesson_Question.purchase_token!=None).all()
 
 	return lessons
 

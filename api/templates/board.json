@@ -1,0 +1,13 @@
+{
+	"result": "success",
+	"articles": [
+		{% for article in articles %}
+		{
+			"id": {{ article.id }},
+			"title": "{{ article.title }}",
+			"content": "{{ article.content }}",
+			"date": "{{ article.created_datetime.strftime('%m/%d') }}"
+		} {% if not loop.last %},{% endif %}
+		{% endfor %}
+	]
+}

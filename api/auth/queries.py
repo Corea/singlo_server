@@ -1,22 +1,65 @@
 # -*- coding: utf-8 -*-
 
 from api import db
-from api.models import Version, Event, User, Teacher, Lesson_Question, \
-        Lesson_Answer, Lesson_Evaluation
+from api.models import Environment, Event, User, Teacher, Lesson_Question, \
+        Lesson_Answer, Lesson_Evaluation, Notice, Qna, Blog_Article
 import api.auth.func as func
 
 from datetime import datetime
 
-def get_version_android():
-	version = Version.query.filter_by(app_name='singlo_android').first()
+def get_environment(key):
+	try:
+		value = Environment.query.filter_by(key=key).first().value
+	except:
+		value = None
 
-	return version
+	return value
+
+def set_environment(key, value):
+	try:
+		environment = Environment.query.filter_by(key=key).first()
+		environment.value = value
+	except:
+		environment = Environment()
+		environment.key = key
+		environment.value = value
+		db.session.add(environment)
+	db.session.commit()
+
+	return environment
 
 def get_valid_event():
 	events = Event.query.filter(Event.start_datetime <= datetime.now()).\
 		filter(Event.end_datetime >= datetime.now()).order_by(Event.id)
 
 	return events
+
+def add_blog_article(article):
+	article = Blog_Article(article)
+	db.session.add(article)
+	db.session.commit()
+
+	return article
+
+def check_blog_article(guid):
+	count = Blog_Article.query.filter_by(guid=guid).count()
+
+	return (count >= 1)
+
+def get_blog_article():
+	articles = Blog_Article.query.all()
+
+	return articles
+
+def get_board_article(board_name):
+	if board_name == 'notice':
+		articles = Notice.query.order_by(Notice.id.desc())
+	elif board_name == 'help':
+		articles = Qna.query.order_by(Qna.id.desc())
+	else:
+		raise
+
+	return articles
 
 def add_user(name, birthday, phone, pushtoken, photo=None, phone_model=None):
 	user = User(name, birthday, phone, pushtoken, phone_model)
@@ -125,7 +168,8 @@ def get_score_evaluation(teacher_id):
         
 def count_unconfirm_question(user_id):
 	questions = Lesson_Question.query.filter_by(
-		user_id=user_id, status=True)
+		user_id=user_id, status=True).filter(
+		Lesson_Question.purchase_token!=None)
 	count = 0
 
 	for question in questions:
@@ -138,6 +182,8 @@ def count_unconfirm_question(user_id):
 
 def count_unanswer_question(teacher_id):
 	count = Lesson_Question.query.filter_by(
-		teacher_id=teacher_id, status=False).count()
+		teacher_id=teacher_id, status=False).filter(
+		Lesson_Question.purchase_token!=None).count()
 
 	return count
+

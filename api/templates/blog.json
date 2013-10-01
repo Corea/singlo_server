@@ -1,0 +1,14 @@
+{
+	"articles": [
+	{% for item in articles %}
+		{
+			"id": {{ item.id }},
+			"guid": "{{ item.guid }}",
+			"link": "{{ item.link }}",
+			"title": "{{ item.title }}",
+			"description": "{{ item.description }}",
+			"created_datetime": "{{ item.created_datetime }}",
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

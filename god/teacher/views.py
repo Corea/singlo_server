@@ -161,7 +161,7 @@ def modify(teacher_id):
 			birthday=birthday, phone=phone, company=company,
 			certification=certification, price=price, profile=profile, 
 			url=url, photo=photo, errors=errors, teacher_id=teacher_id, 
-			push_active=teacher.push_active)
+			status=teacher.status)
 	except Exception, e:
 		print e
 		return redirect(url_for('teacher.list'))
@@ -180,9 +180,9 @@ def remove_photo(teacher_id):
 	queries.delete_photo(teacher_id)
 	return redirect(url_for('teacher.modify', teacher_id=teacher_id))
 
-@mod.route('/change_push/<int:teacher_id>')
+@mod.route('/change_status/<int:teacher_id>')
 @nocache
 @login_required
-def change_push(teacher_id):
-	queries.change_push(teacher_id)
+def change_status(teacher_id):
+	queries.change_status(teacher_id)
 	return redirect(url_for('teacher.modify', teacher_id=teacher_id))

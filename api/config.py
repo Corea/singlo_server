@@ -16,3 +16,5 @@ PROFILE_FOLDER = '/home/garagestory/singlo_server/api/profile' #os.path.join(os.
 EVENT_FOLDER = '/home/garagestory/singlo_server/api/event' #os.path.join(os.getcwd(), 'api/event')
 
 GCM_APIKEY = 'AIzaSyBDkxqu_qW1LofgPLhaSfUoRQIw16WOSY4'
+
+BLOG_RSS = 'http://blog.singlo.co.kr/rss'

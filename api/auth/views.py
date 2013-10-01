@@ -5,7 +5,10 @@ from flask import Blueprint, current_app
 import api.auth.queries as queries
 import api.auth.func as func
 
+from datetime import datetime, timedelta
+
 import os
+import feedparser
 
 
 mod = Blueprint('auth', __name__, url_prefix='/auth')
@@ -13,7 +16,7 @@ mod = Blueprint('auth', __name__, url_prefix='/auth')
 @mod.route('/version_android')
 def version_android():
 	try:
-		version = queries.get_version_android()
+		version = queries.get_environment('singlo_android')
 
 		return render_template('version.json', version=version)
 	except Exception as e:
@@ -27,6 +30,38 @@ def event():
 
 		return render_template('event.json', events=events)
 	except Exception as e:
+		print e
+		return render_template('error.json')
+
+@mod.route('/blog', methods=['GET'])
+def blog():
+	try:
+		last_time = queries.get_environment('blog_rss_time')
+		threshold_time = str(datetime.now() - timedelta(minutes=10))
+		if last_time is None or last_time <= threshold_time: 
+			queries.set_environment('blog_rss_time', str(datetime.now()))
+
+			blog_entries = filter(lambda x: not queries.check_blog_article(x.guid),
+				feedparser.parse(current_app.config['BLOG_RSS']).entries)
+			
+			for item in blog_entries:
+				queries.add_blog_article(item)
+
+		articles = queries.get_blog_article()
+
+		return render_template('blog.json', articles=articles)
+	except Exception as e:
+		print e
+		return render_template('error.json')
+
+@mod.route('/board', methods=['GET'])
+def notice():
+	try:
+		board_name = str(request.args.get('board_name', ''))
+		articles = queries.get_board_article(board_name)
+
+		return render_template('board.json', articles=articles)
+	except Exception, e:
 		print e
 		return render_template('error.json')
 

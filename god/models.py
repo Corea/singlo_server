@@ -7,12 +7,15 @@ from flask.ext.security import UserMixin, RoleMixin
 from datetime import datetime
 
 
-class Version(db.Model):
-	__tablename__ = 'singlo_version'
+class Environment(db.Model):
+	__tablename__ = 'singlo_environment'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
 
-	app_name = db.Column(db.String(128), nullable=False, primary_key=True)
-	app_version = db.Column(db.String(64), nullable=False)
+	key = db.Column(db.String(128), nullable=False, primary_key=True)
+	value = db.Column(db.String(128), nullable=False)
+
+	def __init__(self):
+		pass
 
 class Event(db.Model):
 	__tablename__ = 'singlo_event'
@@ -26,6 +29,27 @@ class Event(db.Model):
 
 	def __init__(self):
 		pass
+
+class Blog_Article(db.Model):
+	__tablename__ = 'singlo_blog_article'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+	
+	id = db.Column(db.Integer, primary_key=True)
+	guid = db.Column(db.String(128), nullable=False, default='', unique=True)
+	link = db.Column(db.String(128), nullable=False, default='')
+	title = db.Column(db.Text, nullable=False, default='')
+	tag = db.Column(db.Text, nullable=False, default='')
+	description = db.Column(db.Text, nullable=False, default='')
+	created_datetime = db.Column(db.DateTime, nullable=False)
+
+	def __init__(self, article):
+		self.guid = article.guid
+		self.link = article.link
+		self.title = article.title
+		self.tag = article.tag
+		self.description = article.description
+		self.created_datetime = datetime.strptime(article.published, 
+			'%a, %d %b %Y %H:%M:%S +0900')
 
 class Notice(db.Model):
 	__tablename__ = 'singlo_notice'
@@ -147,7 +171,9 @@ class Lesson_Question(db.Model):
 	thumbnail = db.Column(db.String(128), nullable=True, default=None)
 	club_type = db.Column(db.Integer, nullable=False)
 	question = db.Column(db.Text, nullable=False)
+	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	purchase_token = db.Column(db.String(256), nullable=True, default=None)
 
 	def __init__(self, user_id, teacher_id, status, lesson_type, video, club_type, question):
 		self.user_id = user_id
@@ -179,7 +205,6 @@ class Lesson_Answer(db.Model):
 	recommend1 = db.Column(db.Integer, nullable=False, default=0)
 	recommend2 = db.Column(db.Integer, nullable=False, default=0)
 	confirm_status = db.Column(db.Boolean, nullable=False, default=False)
-	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
 	def __init__(self, question_id, score1, score2, score3, score4, score5, 
@@ -244,14 +269,14 @@ class Lesson_Evaluation(db.Model):
 		self.accuracy = accuracy
 		self.price = price
 		self.recommend = recommend
-roles_users = db.Table('roles_users',
-	db.Column('singlo_admin_id', db.Integer(), db.ForeignKey('singlo_admin.id')),
-	db.Column('singlo_admin_role_id', db.Integer(), db.ForeignKey('singlo_admin_role.id')))
-
 
 
 
 # ADMIN
+roles_users = db.Table('roles_users',
+	db.Column('singlo_admin_id', db.Integer(), db.ForeignKey('singlo_admin.id')),
+	db.Column('singlo_admin_role_id', db.Integer(), db.ForeignKey('singlo_admin_role.id')))
+
 class Admin_Role(db.Model, RoleMixin):
 	__tablename__ = 'singlo_admin_role'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}

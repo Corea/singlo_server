@@ -37,9 +37,9 @@ def urldecode(text):
 @app.route("/")
 @login_required
 def god():
-	versions = models.Version.query.all()
+	environments = models.Environment.query.all()
 
-	return render_template('index.html', versions=versions)
+	return render_template('index.html', environments=environments)
 
 
 from god.teacher.views import mod as teacherModule

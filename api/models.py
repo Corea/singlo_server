@@ -5,12 +5,12 @@ from api import db
 from datetime import datetime
 
 
-class Version(db.Model):
-	__tablename__ = 'singlo_version'
+class Environment(db.Model):
+	__tablename__ = 'singlo_environment'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
 
-	app_name = db.Column(db.String(128), nullable=False, primary_key=True)
-	app_version = db.Column(db.String(64), nullable=False)
+	key = db.Column(db.String(128), nullable=False, primary_key=True)
+	value = db.Column(db.String(128), nullable=False)
 
 	def __init__(self):
 		pass
@@ -27,6 +27,27 @@ class Event(db.Model):
 
 	def __init__(self):
 		pass
+
+class Blog_Article(db.Model):
+	__tablename__ = 'singlo_blog_article'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+	
+	id = db.Column(db.Integer, primary_key=True)
+	guid = db.Column(db.String(128), nullable=False, default='', unique=True)
+	link = db.Column(db.String(128), nullable=False, default='')
+	title = db.Column(db.Text, nullable=False, default='')
+	tag = db.Column(db.Text, nullable=False, default='')
+	description = db.Column(db.Text, nullable=False, default='')
+	created_datetime = db.Column(db.DateTime, nullable=False)
+
+	def __init__(self, article):
+		self.guid = article.guid
+		self.link = article.link
+		self.title = article.title
+		self.tag = article.tag
+		self.description = article.description
+		self.created_datetime = datetime.strptime(article.published, 
+			'%a, %d %b %Y %H:%M:%S +0900')
 
 class Notice(db.Model):
 	__tablename__ = 'singlo_notice'
@@ -150,6 +171,7 @@ class Lesson_Question(db.Model):
 	question = db.Column(db.Text, nullable=False)
 	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	purchase_token = db.Column(db.String(256), nullable=True, default=None)
 
 	def __init__(self, user_id, teacher_id, status, lesson_type, video, club_type, question):
 		self.user_id = user_id

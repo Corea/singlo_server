@@ -67,10 +67,12 @@ def get_video_capture(file_path, current_time, target_name=None):
 
 	temp_path = os.path.join(current_app.config['CAPTURE_FOLDER'], temp_name)
 
+	rotation = get_video_rotation(file_path)
 
 	os.system('ffmpeg -i %s -ss %s -f image2 -vframes 1 %s' % (file_path, current_time, temp_path))
 
 	image = Image.open(temp_path)
+	image = image.rotate(-float(rotation))
 	width, height = image.size
 	if width > 360: 
 		height = int(height / (width / 360.))
@@ -120,7 +122,6 @@ def ask_fast():
 		elif rotation == 270:
 			transpose = 3
 
-		print transpose
 		os.system("/usr/local/bin/ffmpeg -i %s -filter:v 'setpts=4.0*PTS,transpose=%s' %s" % (temp_file_path, transpose, file_path))
 		try:
 			with open(file_path): pass
@@ -223,18 +224,9 @@ def ask_slow_solo():
 
 		if video is None:
 			lesson_question = queries.add_lesson_question_video(lesson_question)
-		else:
-			lesson_question = queries.add_lesson_question(lesson_question)
+			thumbnail = lesson_question.thumbnail
+			#TODO: 파일 처리 완료 후 DB에 들어가게 설정
 
-		# Push
-		reg_id = teacher_queries.get_teacher_reg_id(teacher_id)
-		if reg_id is not None:
-			gcm.plaintext_request(registration_id=reg_id, 
-				data={'message':'새로운 레슨 신청이 들어왔습니다.'})
-
-		#TODO: 파일 처리 완료 후 DB에 들어가게 설정
-
-		if video is None:
 			# Video Processing
 			temp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 
 				'temp_' + lesson_question.video)
@@ -247,15 +239,16 @@ def ask_slow_solo():
 				rotation = get_video_rotation(temp_file_path)
 				print rotation
 
-				option = 'setpts=4.0*PTS'
-				if rotation == 90:
-					option += ',transpose=1'
-				elif rotation == 180:
-					option += ',vflip,hflip'
-				elif rotation == 270:
-					option += ',transpose=2'
+				option = 'setpts=4.0*PTS,scale=iw/2:-1'
+				#option = 'setpts=4.0*PTS'
+				#if rotation == 90:
+				#	option += ',transpose=1'
+				#elif rotation == 180:
+				#	option += ',vflip,hflip'
+				#elif rotation == 270:
+				#	option += ',transpose=2'
 
-				os.system("/usr/local/bin/ffmpeg -i %s -filter:v '%s' -y -an  -vpre singlo -f mp4 -threads 0 %s" % (temp_file_path, option, file_path))
+				os.system("/usr/local/bin/ffmpeg -i %s -vpre singlo -filter:v '%s' -an -f mp4 %s" % (temp_file_path, option, file_path))
 			except:
 				pass
 
@@ -264,12 +257,36 @@ def ask_slow_solo():
 			except:
 				os.system("mv %s %s" % (temp_file_path, file_path))
 
+			get_video_capture(file_path, 0, thumbnail)
+		else:
+			lesson_question.thumbnail = before_lesson.thumbnail
+			lesson_question = queries.add_lesson_question(lesson_question)
+
 		return render_template('ask.json', lesson=lesson_question)
 	except Exception, e:
 		print e
 		return render_template('error.json')
 
+@mod.route('/ask_slow_payment', methods=['POST'])
+def ask_slow_payment():
+	try:
+		gcm = GCM(current_app.config['GCM_APIKEY'])
+		user_id = int(request.form['user_id'])
+		lesson_id = int(request.form['lesson_id'])
+		purchase_id = request.form['purchase_id']
+		lesson = queries.get_lesson_question(lesson_id)
 
+		# TODO: Purchase Check
+		queries.set_lesson_purchase_token(lesson, purchase_id)
+
+		# Push
+		reg_id = teacher_queries.get_teacher_reg_id(lesson.teacher_id)
+		if reg_id is not None:
+			gcm.plaintext_request(registration_id=reg_id, 
+				data={'message':'새로운 레슨 신청이 들어왔습니다.'})
+	except Exception, e:
+		print e
+		return render_template('error.json')
 
 @mod.route('/answer', methods=['POST'])
 def answer():
