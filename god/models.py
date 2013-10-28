@@ -7,6 +7,7 @@ from flask.ext.security import UserMixin, RoleMixin
 from datetime import datetime
 
 
+
 class Environment(db.Model):
 	__tablename__ = 'singlo_environment'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
@@ -16,6 +17,64 @@ class Environment(db.Model):
 
 	def __init__(self):
 		pass
+
+
+# User & Teacher 
+class User(db.Model):
+	__tablename__ = 'singlo_user'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+	
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(128), nullable=False)
+	birthday = db.Column(db.String(31), nullable=False)
+	phone = db.Column(db.String(31), nullable=False, unique=True)
+	photo = db.Column(db.String(63), nullable=True)
+	phone_model = db.Column(db.String(128), nullable=True, default=None)
+	created_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
+	lastlogin_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
+	pushtoken = db.Column(db.String(200), nullable=True)
+	active = db.Column(db.Boolean, nullable=False, default=True)
+	point = db.Column(db.Integer, nullable=False, default=0)
+	
+	def __init__(self, name, birthday, phone, pushtoken, photo=None, phone_model=None):
+		self.name = name
+		self.birthday = birthday
+		self.phone = phone
+		self.pushtoken = pushtoken
+		self.photo = photo
+		self.phone_model = phone_model
+
+	def set_password(password):
+		pass
+
+class Teacher(db.Model):
+	__tablename__ = 'singlo_teacher'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+	
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(128), nullable=False)
+	birthday = db.Column(db.String(31), nullable=False)
+	phone = db.Column(db.String(31), nullable=False, unique=True)
+	photo = db.Column(db.String(63), nullable=True)
+	company = db.Column(db.String(256), nullable=False)
+	certification = db.Column(db.String(256), nullable=False)
+	status = db.Column(db.Boolean, nullable=False, default=True)
+	status_message = db.Column(db.String(255), nullable=False, default='')
+	price = db.Column(db.Integer, nullable=False)
+	profile = db.Column(db.Text, nullable=False)
+	url = db.Column(db.String(127), nullable=False)
+	active = db.Column(db.Boolean, nullable=False, default=True)
+	phone_model = db.Column(db.String(128), nullable=True, default=None)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	lastlogin_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	pushtoken = db.Column(db.String(200), nullable=True)
+	push_active = db.Column(db.Boolean, nullable=False, default=True)
+	revenue = db.Column(db.Integer, nullable=False, default=0)
+
+	def __init__(self):
+		pass
+
+
 
 class Event(db.Model):
 	__tablename__ = 'singlo_event'
@@ -37,6 +96,7 @@ class Blog_Article(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	guid = db.Column(db.String(128), nullable=False, default='', unique=True)
 	link = db.Column(db.String(128), nullable=False, default='')
+	thumbnail = db.Column(db.String(256), nullable=False, default='')
 	title = db.Column(db.Text, nullable=False, default='')
 	tag = db.Column(db.Text, nullable=False, default='')
 	description = db.Column(db.Text, nullable=False, default='')
@@ -51,6 +111,50 @@ class Blog_Article(db.Model):
 		self.created_datetime = datetime.strptime(article.published, 
 			'%a, %d %b %Y %H:%M:%S +0900')
 
+
+# Golfbag
+class Item(db.Model):
+	__tablename__ = 'singlo_item'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(128), nullable=False, default='')
+	price = db.Column(db.Integer, nullable=False)
+	count = db.Column(db.Integer, nullable=False)
+	android_name = db.Column(db.String(128), nullable=False, default='')
+	description = db.Column(db.String(512), nullable=False, default='')
+	image = db.Column(db.String(128), nullable=False, default='')
+
+	def __init__(self, title, price, count, android_name, description='', image=''):
+		self.title = title
+		self.price = price
+		self.count = count
+		self.android_name = android_name
+		self.description = description
+		self.image = image
+
+class Purchase(db.Model):
+	__tablename__ = 'singlo_purchase'
+	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
+
+	id = db.Column(db.Integer, primary_key=True)
+	user_id = db.Column(db.Integer, 
+		db.ForeignKey('singlo_user.id'), nullable=False)
+	user = db.relationship('User')
+	item_id = db.Column(db.Integer, 
+		db.ForeignKey('singlo_item.id'), nullable=False)
+	item = db.relationship('Item')
+	token = db.Column(db.String(256), nullable=True, default=None)
+	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
+	
+	def __init__(self, user_id, item_id, token):
+		self.user_id = user_id
+		self.item_id = item_id
+		self.token = token
+
+
+
+# Board
 class Notice(db.Model):
 	__tablename__ = 'singlo_notice'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
@@ -79,59 +183,9 @@ class Qna(db.Model):
 		self.title = title
 		self.content = content
 
-class User(db.Model):
-	__tablename__ = 'singlo_user'
-	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
-	
-	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String(128), nullable=False)
-	birthday = db.Column(db.String(31), nullable=False)
-	phone = db.Column(db.String(31), nullable=False, unique=True)
-	photo = db.Column(db.String(63), nullable=True)
-	phone_model = db.Column(db.String(128), nullable=True, default=None)
-	created_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
-	lastlogin_datetime = db.Column(db.DateTime, nullable=True, default=datetime.now)
-	pushtoken = db.Column(db.String(200), nullable=True)
-	active = db.Column(db.Boolean, nullable=False, default=True)
-	
-	def __init__(self, name, birthday, phone, pushtoken, photo=None, phone_model=None):
-		self.name = name
-		self.birthday = birthday
-		self.phone = phone
-		self.pushtoken = pushtoken
-		self.photo = photo
-		self.phone_model = phone_model
-
-	def set_password(password):
-		pass
 
 
-class Teacher(db.Model):
-	__tablename__ = 'singlo_teacher'
-	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
-	
-	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String(128), nullable=False)
-	birthday = db.Column(db.String(31), nullable=False)
-	phone = db.Column(db.String(31), nullable=False, unique=True)
-	photo = db.Column(db.String(63), nullable=True)
-	company = db.Column(db.String(256), nullable=False)
-	certification = db.Column(db.String(256), nullable=False)
-	status = db.Column(db.Boolean, nullable=False, default=True)
-	status_message = db.Column(db.String(255), nullable=False, default='')
-	price = db.Column(db.Integer, nullable=False)
-	profile = db.Column(db.Text, nullable=False)
-	url = db.Column(db.String(127), nullable=False)
-	active = db.Column(db.Boolean, nullable=False, default=True)
-	phone_model = db.Column(db.String(128), nullable=True, default=None)
-	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
-	lastlogin_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
-	pushtoken = db.Column(db.String(200), nullable=True)
-	push_active = db.Column(db.Boolean, nullable=False, default=True)
-
-	def __init__(self):
-		pass
-
+# Teacher List
 class User_Teacher_Like(db.Model):
 	__tablename__ = 'singlo_user_teacher_like'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
@@ -149,13 +203,8 @@ class User_Teacher_Like(db.Model):
 		self.status = status
 
 
-class Lesson_Training(db.Model):
-	__tablename__ = 'singlo_lesson_training'
-	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
-	
-	id = db.Column(db.Integer, primary_key=True)
-	title = db.Column(db.String(127), nullable=False)
 
+# Lesson
 class Lesson_Question(db.Model):
 	__tablename__ = 'singlo_lesson_question'
 	__table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'}
@@ -173,9 +222,9 @@ class Lesson_Question(db.Model):
 	question = db.Column(db.Text, nullable=False)
 	evaluation_status = db.Column(db.Boolean, nullable=False, default=False)
 	created_datetime = db.Column(db.DateTime, nullable=False, default=datetime.now)
-	purchase_token = db.Column(db.String(256), nullable=True, default=None)
+	price = db.Column(db.Integer, nullable=False, default=0)
 
-	def __init__(self, user_id, teacher_id, status, lesson_type, video, club_type, question):
+	def __init__(self, user_id, teacher_id, status, lesson_type, video, club_type, question, price=0):
 		self.user_id = user_id
 		self.teacher_id = teacher_id
 		self.status = status
@@ -183,6 +232,7 @@ class Lesson_Question(db.Model):
 		self.video = video
 		self.club_type = club_type
 		self.question = question
+		self.price = price
 
 class Lesson_Answer(db.Model):
 	__tablename__ = 'singlo_lesson_answer'
@@ -269,7 +319,6 @@ class Lesson_Evaluation(db.Model):
 		self.accuracy = accuracy
 		self.price = price
 		self.recommend = recommend
-
 
 
 # ADMIN

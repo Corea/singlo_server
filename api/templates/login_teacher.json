@@ -12,6 +12,8 @@
 	"url": "{{ teacher.url or '' }}",
 	"active": {{ teacher.active or False }}, 
 	"count": {{ count }}, 
+	"point": {{ teacher.revenue }},
+	"revenue": {{ teacher.revenue*100 }},
 
 	"evaluation_count": {{ evaluation.count }},
 	"evaluation_score": {{ evaluation.average }}

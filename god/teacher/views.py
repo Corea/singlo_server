@@ -62,6 +62,8 @@ def add():
 
 		try:
 			price = int(price)
+			if price % 100 != 0:
+				errors.append('금액은 100의 배수여야 합니다.')
 		except: 
 			errors.append('금액은 정수여야합니다.')
 
@@ -148,6 +150,8 @@ def modify(teacher_id):
 
 			try:
 				price = int(price)
+				if price % 100 != 0:
+					errors.append('금액은 100의 배수여야 합니다.')
 			except: 
 				errors.append('금액은 정수여야합니다.')
 

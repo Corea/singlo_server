@@ -34,8 +34,14 @@ def get_valid_event():
 
 	return events
 
-def add_blog_article(article):
+def get_all_event():
+	events = Event.query.order_by(Event.id).all()
+
+	return events
+
+def add_blog_article(article, thumbnail=''):
 	article = Blog_Article(article)
+	article.thumbnail = thumbnail
 	db.session.add(article)
 	db.session.commit()
 
@@ -46,8 +52,12 @@ def check_blog_article(guid):
 
 	return (count >= 1)
 
-def get_blog_article():
-	articles = Blog_Article.query.all()
+def get_blog_article(start_id, count):
+	if start_id == 0: 
+		articles = Blog_Article.query.order_by(Blog_Article.id.desc()).limit(count)
+	else:
+		articles = Blog_Article.query.filter(Blog_Article.id <= start_id).\
+			order_by(Blog_Article.id.desc()).limit(count)
 
 	return articles
 
@@ -168,8 +178,7 @@ def get_score_evaluation(teacher_id):
         
 def count_unconfirm_question(user_id):
 	questions = Lesson_Question.query.filter_by(
-		user_id=user_id, status=True).filter(
-		Lesson_Question.purchase_token!=None)
+		user_id=user_id, status=True)
 	count = 0
 
 	for question in questions:
@@ -182,8 +191,7 @@ def count_unconfirm_question(user_id):
 
 def count_unanswer_question(teacher_id):
 	count = Lesson_Question.query.filter_by(
-		teacher_id=teacher_id, status=False).filter(
-		Lesson_Question.purchase_token!=None).count()
+		teacher_id=teacher_id, status=False).count()
 
 	return count
 

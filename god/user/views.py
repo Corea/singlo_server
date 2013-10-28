@@ -33,12 +33,14 @@ def modify(user_id):
 			name = urldecode(user.name)
 			birthday = urldecode(user.birthday)
 			phone = urldecode(user.phone)
+			point = user.point
 			photo = user.photo
 			errors = []
 		else:
 			name = request.form['name'].strip()
 			birthday = request.form['birthday'].strip()
 			phone = request.form['phone'].strip()
+			point = request.form['point'].strip()
 			photo = user.photo
 
 			errors = []
@@ -49,11 +51,16 @@ def modify(user_id):
 				errors.append('생일이 빈칸입니다.')
 			if phone == u'' or phone == '':
 				errors.append('전화번호가 빈칸입니다.')
+			try:
+				point = int(point)
+			except: 
+				errors.append('골프공의 수는 정수여야합니다.')
+
 			if len(errors) == 0: 
-				queries.modify_user(user, name, birthday, phone)
+				queries.modify_user(user, name, birthday, phone, point)
 				return redirect(url_for('user.list'))
 		return render_template('user_modify.html', name=name,
-			birthday=birthday, phone=phone, photo=photo, 
+			birthday=birthday, phone=phone, point=point, photo=photo, 
 			user_id=user_id, errors=errors)
 	except Exception, e:
 		print e

@@ -7,8 +7,9 @@ import api.auth.func as func
 
 from datetime import datetime, timedelta
 
-import os
 import feedparser
+import os
+import urllib
 
 
 mod = Blueprint('auth', __name__, url_prefix='/auth')
@@ -33,21 +34,52 @@ def event():
 		print e
 		return render_template('error.json')
 
+@mod.route('/event_full')
+def event_full():
+	try:
+		events = queries.get_all_event()
+
+		return render_template('event.json', events=events)
+	except Exception as e:
+		print e
+		return render_template('error.json')
+
+
 @mod.route('/blog', methods=['GET'])
 def blog():
 	try:
+		start_id = int(request.args.get('startid', '0'))
+		size = int(request.args.get('size', '10'))
+
 		last_time = queries.get_environment('blog_rss_time')
 		threshold_time = str(datetime.now() - timedelta(minutes=10))
 		if last_time is None or last_time <= threshold_time: 
 			queries.set_environment('blog_rss_time', str(datetime.now()))
 
 			blog_entries = filter(lambda x: not queries.check_blog_article(x.guid),
-				feedparser.parse(current_app.config['BLOG_RSS']).entries)
+				feedparser.parse(current_app.config['BLOG_RSS']).entries)[::-1]
 			
 			for item in blog_entries:
-				queries.add_blog_article(item)
+				thumbnail = ''
+				try:
+					response = urllib.urlopen(item.link)
+					page_source = response.read()
+					new_link = page_source.split('id="screenFrame"')[1].split('src="')[1].split('"')[0]
 
-		articles = queries.get_blog_article()
+					response = urllib.urlopen(new_link)
+					page_source = response.read()
+					new_link = new_link.split('://')[0] + '://' + new_link.split('://')[1].split('/')[0]
+					new_link += page_source.split('id="mainFrame"')[1].split('src="')[1].split('"')[0]
+				
+					response = urllib.urlopen(new_link)
+					page_source = response.read()
+					thumbnail = page_source.split('og:image')[1].split('content="')[1].split('"')[0]
+				except Exception as e:
+					print e
+
+				queries.add_blog_article(item, thumbnail)
+
+		articles = queries.get_blog_article(start_id, size)
 
 		return render_template('blog.json', articles=articles)
 	except Exception as e:

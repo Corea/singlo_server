@@ -1,4 +1,5 @@
 {
+	"status": "success",
 	"lessons": [
 	{% for lesson in lessons %}
 		{

@@ -1,0 +1,5 @@
+{
+	"result": "success", 
+	"point": {{ teacher.revenue }},
+	"revenue": {{ teacher.revenue*100 }}
+}

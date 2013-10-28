@@ -5,9 +5,10 @@
 			"id": {{ item.id }},
 			"guid": "{{ item.guid }}",
 			"link": "{{ item.link }}",
+			{% if item.thumbnail %}"constentImg": "{{ item.thumbnail }}",{% endif %}
 			"title": "{{ item.title }}",
 			"description": "{{ item.description }}",
-			"created_datetime": "{{ item.created_datetime }}",
+			"created_datetime": "{{ item.created_datetime.strftime('%Y.%m.%d %H:%M')  }}",
 		}{% if not loop.last %},{% endif %}
 	{% endfor %}
 	]

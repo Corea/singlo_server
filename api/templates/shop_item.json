@@ -1,0 +1,16 @@
+{
+	"status": "success",
+	"items": [
+	{% for item in items %}
+		{
+			"id": {{ item.id }},
+			"title": "{{ item.title }}",
+			"price": {{ item.price }},
+			"count": {{ item.count }},
+			"android_name": "{{ item.android_name }}",
+			"description": "{{ item.description }}",
+			"image": "{{ item.image }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

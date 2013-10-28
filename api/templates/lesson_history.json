@@ -1,0 +1,14 @@
+{
+	"status": "success", 
+	"lessons": [
+	{% for lesson in lessons %}
+		{
+			"properserName ": "{{ lesson.user.name }}",
+			"lessonState": {{ lesson.status }},
+			"lessonType": {{ lesson.lesson_type }},
+			"clubType": {{ lesson.club_type }},
+			"date": "{{ lesson.created_datetime.strftime('%Y.%m.%d %H:%M') }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

@@ -1,4 +1,5 @@
 {
 	"result": "success",
+	"userPoint": {{ userPoint }},
 	"lesson_id": {{ lesson.id }}
 }

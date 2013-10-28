@@ -3,7 +3,9 @@
 	{% for event in events %}
 		{ 
 			"id": {{ event.id }},
-			"image": "{{ event.image }}"
+			"image": "{{ event.image }}",
+			"start_datetime": "{{ event.start_datetime }}",
+			"end_datetime": "{{ event.end_datetime }}"
 		}{% if not loop.last %},{% endif %}
 	{% endfor %}
 	]

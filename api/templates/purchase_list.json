@@ -1,0 +1,17 @@
+{
+	"status": "success",
+	"purchaseList": [
+	{% for purchase in purchases %}
+		{
+			"itemId": {{ purchase.item.id }},
+			"title": "{{ purchase.item.title }}",
+			"price": {{ purchase.item.price }},
+			"count": {{ purchase.item.count }},
+			"android_name": "{{ purchase.item.android_name }}",
+			"description": "{{ purchase.item.description }}",
+			"img": "{{ purchase.item.image }}",
+			"date": "{{ purchase.created_datetime.strftime('%Y.%m.%d') }}"
+		}{% if not loop.last %},{% endif %}
+	{% endfor %}
+	]
+}

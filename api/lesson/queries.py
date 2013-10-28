@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from api import db
-from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image,\
-	Lesson_Training, Lesson_Evaluation
+from api.models import Lesson_Question, Lesson_Answer, Lesson_Answer_Image, Lesson_Evaluation
 
 def add_lesson_question_video(lesson_question):
 	db.session.add(lesson_question)
@@ -19,12 +18,6 @@ def add_lesson_question(lesson_question):
 
 	return lesson_question
 
-
-def set_lesson_purchase_token(lesson_question, token):
-	lesson_question.purchase_token = token
-	db.session.commit()
-
-	return lesson_question
 
 def get_lesson_question(lesson_id):
 	lesson = Lesson_Question.query.filter_by(
@@ -66,20 +59,23 @@ def get_lesson_answer_image(answer_id):
 
 def get_all_lesson(teacher_id):
 	lessons1 = Lesson_Question.query.filter_by(
-		teacher_id=teacher_id).filter(
-		Lesson_Question.purchase_token!=None).all()
+		teacher_id=teacher_id).all()
 	lessons2 = Lesson_Question.query.filter_by(
-		teacher_id=None, status=False).filter(
-		Lesson_Question.purchase_token!=None).all()
+		teacher_id=None, status=False).all()
 
 	lessons = lessons1 + lessons2 
 
 	return lessons
 
+def get_all_lesson_by_teacher(teacher_id):
+	lessons = Lesson_Question.query.filter_by(
+		teacher_id=teacher_id).all()
+
+	return lessons
+
 def get_all_lesson_by_user(user_id):
 	lessons = Lesson_Question.query.filter_by(
-		user_id=user_id).filter(
-		Lesson_Question.purchase_token!=None).all()
+		user_id=user_id).all()
 
 	return lessons
 

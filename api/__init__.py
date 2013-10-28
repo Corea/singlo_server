@@ -36,8 +36,10 @@ def event_file(filename):
 from api.auth.views import mod as authModule
 from api.teacher.views import mod as teacherModule
 from api.lesson.views import mod as lessonModule
+from api.purchase.views import mod as purchaseModule
 app.register_blueprint(authModule)
 app.register_blueprint(teacherModule)
 app.register_blueprint(lessonModule)
+app.register_blueprint(purchaseModule)
 
 

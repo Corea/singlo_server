@@ -20,10 +20,11 @@ def get_all_user():
 
 	return users
 
-def modify_user(user, name, birthday, phone):
+def modify_user(user, name, birthday, phone, point):
 	user.name = urllib.quote(name.encode('utf8'))
 	user.birthday = urllib.quote(birthday.encode('utf8'))
 	user.phone = urllib.quote(phone.encode('utf8'))
+	user.point = point
 	god_db.session.commit()
 
 	return user

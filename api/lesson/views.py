@@ -134,6 +134,8 @@ def ask_fast():
 
 @mod.route('/ask_slow', methods=['POST'])
 def ask_slow():
+	# 해당 기능 막아놓기로 하였음.
+	return render_template('error.json')
 	gcm = GCM(current_app.config['GCM_APIKEY'])
 	try:
 		user_id = int(request.form['user_id'])
@@ -177,7 +179,6 @@ def ask_slow():
 		file.save(temp_file_path)
 		os.system('/usr/local/bin/MP4Box -hint %s' % temp_file_path)
 		rotation = get_video_rotation(temp_file_path)
-		print rotation
 
 		option = 'setpts=4.0*PTS,scale=iw/2:-1'
 #		if rotation == 90:
@@ -204,6 +205,7 @@ def ask_slow():
 @mod.route('/ask_slow_solo', methods=['POST'])
 def ask_slow_solo():
 	gcm = GCM(current_app.config['GCM_APIKEY'])
+	msg = ''
 	try:
 		user_id = int(request.form['user_id'])
 		teacher_id = int(request.form['teacher_id'])
@@ -218,9 +220,17 @@ def ask_slow_solo():
 		elif 'video' not in request.files or not request.files['video']:
 			raise
 
+		user = auth_queries.get_user(user_id)
+		teacher = auth_queries.get_teacher(teacher_id)
+		if user.point < teacher.price / 100:
+			msg = '골프공이 부족합니다'
+			raise
+
+		user.point -= teacher.price / 100
+			
 		lesson_question = Lesson_Question(
 			user_id, teacher_id, False, lesson_type, 
-			video, club_type, question)
+			video, club_type, question, teacher.price / 100)
 
 		if video is None:
 			lesson_question = queries.add_lesson_question_video(lesson_question)
@@ -237,17 +247,8 @@ def ask_slow_solo():
 			try:
 				os.system('/usr/local/bin/MP4Box -hint %s' % temp_file_path)
 				rotation = get_video_rotation(temp_file_path)
-				print rotation
 
 				option = 'setpts=4.0*PTS,scale=iw/2:-1'
-				#option = 'setpts=4.0*PTS'
-				#if rotation == 90:
-				#	option += ',transpose=1'
-				#elif rotation == 180:
-				#	option += ',vflip,hflip'
-				#elif rotation == 270:
-				#	option += ',transpose=2'
-
 				os.system("/usr/local/bin/ffmpeg -i %s -vpre singlo -filter:v '%s' -an -f mp4 %s" % (temp_file_path, option, file_path))
 			except:
 				pass
@@ -262,11 +263,17 @@ def ask_slow_solo():
 			lesson_question.thumbnail = before_lesson.thumbnail
 			lesson_question = queries.add_lesson_question(lesson_question)
 
-		return render_template('ask.json', lesson=lesson_question)
+		reg_id = teacher_queries.get_teacher_reg_id(teacher_id)
+		if reg_id is not None:
+			gcm.plaintext_request(registration_id=reg_id, 
+				data={'message':'새로운 레슨 신청이 들어왔습니다.'})
+
+		return render_template('ask.json', lesson=lesson_question, userPoint=user.point)
 	except Exception, e:
 		print e
 		return render_template('error.json')
 
+'''
 @mod.route('/ask_slow_payment', methods=['POST'])
 def ask_slow_payment():
 	try:
@@ -287,6 +294,7 @@ def ask_slow_payment():
 	except Exception, e:
 		print e
 		return render_template('error.json')
+'''
 
 @mod.route('/answer', methods=['POST'])
 def answer():
@@ -317,9 +325,12 @@ def answer():
 		if lesson_question.status:
 			return render_template('error.json')
 
+		teacher = auth_queries.get_teacher(teacher_id)
+
 		# TODO: this rountines muste be in queries.py
 		lesson_question.teacher_id = teacher_id
 		lesson_question.status = True
+		teacher.revenue += lesson_question.price
 		# END TODO
 
 		lesson_answer = Lesson_Answer(lesson_id, score1, score2, score3,
@@ -360,11 +371,24 @@ def answer():
 		print e
 		return render_template('error.json')
 
+
+@mod.route('/revenue', methods=['GET'])
+def revenue():
+	teacher_id = int(request.args.get('teacher_id', 0))
+	teacher = auth_queries.get_teacher(teacher_id)
+	return render_template('lesson_revenue.json', teacher=teacher)
+
 @mod.route('/get_list', methods=['POST'])
 def get_list():
 	teacher_id = int(request.form['teacher_id'])
 	lessons = queries.get_all_lesson(teacher_id)
 	return render_template('get_lesson_list.json', lessons=lessons)
+
+@mod.route('/history', methods=['GET'])
+def history():
+	teacher_id = int(request.args.get('teacher_id', 0))
+	lessons = queries.get_all_lesson_by_teacher(teacher_id)
+	return render_template('lesson_history.json', lessons=lessons)
 
 @mod.route('/get_list_user', methods=['POST'])
 def get_list_user():

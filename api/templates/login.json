@@ -3,5 +3,6 @@
 	"type": "user",
 	"id": {{ user.id }},
 	"photo": "{{ user.photo or '' }}", 
-	"count": {{ count }}
+	"count": {{ count }},
+	"userPoint": {{ user.point }}
 }
